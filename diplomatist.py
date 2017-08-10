@@ -23,6 +23,14 @@ class Diplomatist():
         except speech_recognition.RequestError as e:
             print "Request Error: {0}".format(e)
             return False
+    
+    def record(self, audio_file):
+        recognizer = speech_recognition.Recognizer()
+        with speech_recognition.Microphone() as source:
+            print "Say something!"
+            audio = recognizer.listen(source)
+        with open(audio_file, "wb") as f:
+            f.write(audio.get_wav_data())
 
 if __name__ == "__main__":
     diplomatist = Diplomatist()
