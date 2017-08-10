@@ -1,3 +1,3 @@
-pocketsphinx==0.1.3
-SpeechRecognition==3.7.1
-PyAudio==0.2.11
+pocketsphinx
+SpeechRecognition
+PyAudio
