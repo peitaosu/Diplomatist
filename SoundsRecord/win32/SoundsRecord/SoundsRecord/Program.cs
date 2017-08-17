@@ -5,13 +5,21 @@
 using System;
 using CSCore.SoundIn;
 using CSCore.Codecs.WAV;
+using System.Threading;
 
 namespace SoundsRecord
 {
     class Program
     {
-        static void Main(string[] args)
+        static int Main(string[] args)
         {
+            if (args.Length == 0 || args[0] == "-h" || args[0] == "--help")
+            {
+                System.Console.WriteLine("Usage:");
+                System.Console.WriteLine("    SoundsRecord.exe <time/seconds> <output/wav>");
+                return 1;
+            }
+
             using (WasapiCapture capture = new WasapiLoopbackCapture())
             {
 
@@ -19,7 +27,7 @@ namespace SoundsRecord
                 capture.Initialize();
 
                 //create a wavewriter to write the data to
-                using (WaveWriter w = new WaveWriter("dump.wav", capture.WaveFormat))
+                using (WaveWriter w = new WaveWriter(args[1], capture.WaveFormat))
                 {
                     //setup an eventhandler to receive the recorded data
                     capture.DataAvailable += (s, e) =>
@@ -31,12 +39,14 @@ namespace SoundsRecord
                     //start recording
                     capture.Start();
 
-                    Console.ReadKey();
+                    //delay and keep recording
+                    Thread.Sleep(Int32.Parse(args[0]) * 1000);
 
                     //stop recording
                     capture.Stop();
                 }
             }
+            return 0;
         }
     }
 }
