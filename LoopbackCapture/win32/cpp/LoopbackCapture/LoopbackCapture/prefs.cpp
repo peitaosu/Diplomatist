@@ -14,12 +14,13 @@ void usage(LPCWSTR exe) {
     LOG(
         L"%ls -?\n"
         L"%ls --list-devices\n"
-        L"%ls [--device \"Device long name\"] [--file \"file name\"] [--int-16]\n"
+        L"%ls [--device \"Device long name\"] [--file \"file name\"] [--time \"capture seconds\"] [--int-16]\n"
         L"\n"
         L"    -? prints this message.\n"
         L"    --list-devices displays the long names of all active playback devices.\n"
         L"    --device captures from the specified device (default if omitted)\n"
         L"    --file saves the output to a file (%ls if omitted)\n"
+		L"    --time capture specific seconds\n"
         L"    --int-16 attempts to coerce data to 16-bit integer format",
         exe, exe, exe, DEFAULT_FILE
     );
@@ -31,6 +32,7 @@ CPrefs::CPrefs(int argc, LPCWSTR argv[], HRESULT &hr)
 , m_bInt16(false)
 , m_pwfx(NULL)
 , m_szFilename(NULL)
+, m_time(INFINITE)
 {
     switch (argc) {
         case 2:
@@ -106,6 +108,15 @@ CPrefs::CPrefs(int argc, LPCWSTR argv[], HRESULT &hr)
                     m_bInt16 = true;
                     continue;
                 }
+
+				// --time
+				if (0 == _wcsicmp(argv[i], L"--time")) {
+					//if _wtoi cannot convert the string it will return 0
+					if (0 != _wtoi(argv[i])) {
+						m_time = _wtoi(argv[i]) * 1000;
+					}
+					continue;
+				}
 
                 ERR(L"Invalid argument %ls", argv[i]);
                 hr = E_INVALIDARG;

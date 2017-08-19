@@ -105,7 +105,7 @@ int do_everything(int argc, LPCWSTR argv[]) {
         bool bKeepWaiting = true;
         while (bKeepWaiting) {
 
-            dwWaitResult = WaitForMultipleObjects(2, rhHandles, FALSE, INFINITE);
+            dwWaitResult = WaitForMultipleObjects(2, rhHandles, FALSE, prefs.m_time);
 
             switch (dwWaitResult) {
 
@@ -138,6 +138,10 @@ int do_everything(int argc, LPCWSTR argv[]) {
                     // continue waiting
                 }
                 break;
+
+			case STATUS_TIMEOUT:
+				bKeepWaiting = false;
+				break;
 
             default:
                 ERR(L"WaitForMultipleObjects returned unexpected value 0x%08x", dwWaitResult);
