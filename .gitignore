@@ -7,8 +7,8 @@
 # Python
 *.pyc
 
-# SoundsRecord Build Output Folder
-/SoundsRecord/win32/SoundsRecord/SoundsRecord/bin/Debug
-/SoundsRecord/win32/SoundsRecord/SoundsRecord/obj/Debug
-/SoundsRecord/win32/SoundsRecord/SoundsRecord/bin/Release
-/SoundsRecord/win32/SoundsRecord/SoundsRecord/bin/Release
+# LoopbackCapture Build Output Folder
+/LoopbackCapture/win32/csharp/LoopbackCapture/LoopbackCapture/bin/Debug
+/LoopbackCapture/win32/csharp/LoopbackCapture/LoopbackCapture/obj/Debug
+/LoopbackCapture/win32/csharp/LoopbackCapture/LoopbackCapture/bin/Release
+/LoopbackCapture/win32/csharp/LoopbackCapture/LoopbackCapture/bin/Release
