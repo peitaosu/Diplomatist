@@ -13,7 +13,7 @@ namespace SoundsRecord
     {
         static int Main(string[] args)
         {
-            if (args.Length == 0 || args[0] == "-h" || args[0] == "--help")
+            if (args.Length < 2)
             {
                 System.Console.WriteLine("Usage:");
                 System.Console.WriteLine("    SoundsRecord.exe <time/seconds> <output/wav>");
