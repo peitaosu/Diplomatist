@@ -13,11 +13,36 @@ namespace SoundsRecord
     {
         static int Main(string[] args)
         {
-            if (args.Length < 2)
+            int time;
+            string output_file;
+
+            switch (args.Length)
             {
-                System.Console.WriteLine("Usage:");
-                System.Console.WriteLine("    SoundsRecord.exe <time/seconds> <output/wav>");
-                return 1;
+                case 1:
+                    if (args[0] == "-h")
+                    {
+                        System.Console.WriteLine("Usage:");
+                        System.Console.WriteLine("    SoundsRecord.exe <output/wav> <time/seconds>");
+                        return 1;
+                    }
+                    output_file = args[0];
+                    time = 0;
+                    break;
+                case 2:
+                    output_file = args[0];
+                    try
+                    {
+                        time = Int32.Parse(args[1]) * 1000;
+                    }
+                    catch
+                    {
+                        time = 0;
+                    }
+                    break;
+                default:
+                    time = 0;
+                    output_file = "record.wav";
+                    break;
             }
 
             using (WasapiCapture capture = new WasapiLoopbackCapture())
@@ -27,7 +52,7 @@ namespace SoundsRecord
                 capture.Initialize();
 
                 //create a wavewriter to write the data to
-                using (WaveWriter w = new WaveWriter(args[1], capture.WaveFormat))
+                using (WaveWriter w = new WaveWriter(output_file, capture.WaveFormat))
                 {
                     //setup an eventhandler to receive the recorded data
                     capture.DataAvailable += (s, e) =>
@@ -40,7 +65,14 @@ namespace SoundsRecord
                     capture.Start();
 
                     //delay and keep recording
-                    Thread.Sleep(Int32.Parse(args[0]) * 1000);
+                    if (time != 0)
+                    {
+                        Thread.Sleep(time);
+                    }
+                    else
+                    {
+                        Console.ReadKey();
+                    }
 
                     //stop recording
                     capture.Stop();
