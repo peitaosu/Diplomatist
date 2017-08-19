@@ -1,5 +1,14 @@
 # Visual Studio Code Configuration Files
 .vscode/
 
+# Visual Studio Configuration Files
+.vs/
+
 # Python
 *.pyc
+
+# SoundsRecord Build Output Folder
+/SoundsRecord/win32/SoundsRecord/SoundsRecord/bin/Debug
+/SoundsRecord/win32/SoundsRecord/SoundsRecord/obj/Debug
+/SoundsRecord/win32/SoundsRecord/SoundsRecord/bin/Release
+/SoundsRecord/win32/SoundsRecord/SoundsRecord/bin/Release
