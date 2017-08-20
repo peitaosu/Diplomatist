@@ -111,6 +111,11 @@ CPrefs::CPrefs(int argc, LPCWSTR argv[], HRESULT &hr)
 
 				// --time
 				if (0 == _wcsicmp(argv[i], L"--time")) {
+					if (i++ == argc) {
+						ERR(L"%s", L"--time requires an argument");
+						hr = E_INVALIDARG;
+						return;
+					}
 					//if _wtoi cannot convert the string it will return 0
 					if (0 != _wtoi(argv[i])) {
 						m_time = _wtoi(argv[i]) * 1000;
