@@ -14,13 +14,13 @@ void usage(LPCWSTR exe) {
     LOG(
         L"%ls -?\n"
         L"%ls --list-devices\n"
-        L"%ls [--device \"Device long name\"] [--file \"file name\"] [--time \"capture seconds\"] [--int-16]\n"
+        L"%ls [--device \"Device long name\"] [--file \"file name\"] [--time \"capture milliseconds\"] [--int-16]\n"
         L"\n"
         L"    -? prints this message.\n"
         L"    --list-devices displays the long names of all active playback devices.\n"
         L"    --device captures from the specified device (default if omitted)\n"
         L"    --file saves the output to a file (%ls if omitted)\n"
-		L"    --time capture specific seconds\n"
+		L"    --time capture specific milliseconds\n"
         L"    --int-16 attempts to coerce data to 16-bit integer format",
         exe, exe, exe, DEFAULT_FILE
     );
@@ -118,7 +118,7 @@ CPrefs::CPrefs(int argc, LPCWSTR argv[], HRESULT &hr)
 					}
 					//if _wtoi cannot convert the string it will return 0
 					if (0 != _wtoi(argv[i])) {
-						m_time = _wtoi(argv[i]) * 1000;
+						m_time = _wtoi(argv[i]);
 					}
 					continue;
 				}
