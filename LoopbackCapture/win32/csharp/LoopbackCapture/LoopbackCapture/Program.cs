@@ -22,7 +22,7 @@ namespace LoopbackCapture
                     if (args[0] == "-h")
                     {
                         System.Console.WriteLine("Usage:");
-                        System.Console.WriteLine("    LoopbackCapture.exe <output/wav> <time/seconds>");
+                        System.Console.WriteLine("    LoopbackCapture.exe <output/wav> <time/milliseconds>");
                         return 1;
                     }
                     output_file = args[0];
@@ -32,7 +32,7 @@ namespace LoopbackCapture
                     output_file = args[0];
                     try
                     {
-                        time = Int32.Parse(args[1]) * 1000;
+                        time = Int32.Parse(args[1]);
                     }
                     catch
                     {
