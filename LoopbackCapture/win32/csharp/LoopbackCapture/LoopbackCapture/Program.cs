@@ -3,6 +3,7 @@
  */
 
 using System;
+using CSCore;
 using CSCore.SoundIn;
 using CSCore.Codecs.WAV;
 using System.Threading;
@@ -45,7 +46,11 @@ namespace LoopbackCapture
                     break;
             }
 
-            using (WasapiCapture capture = new WasapiLoopbackCapture())
+            //set wave format
+            WaveFormat wave_format = new WaveFormat(48000, 32, 2, AudioEncoding.Pcm);
+            int latency = 100;
+
+            using (WasapiCapture capture = new WasapiLoopbackCapture(latency, wave_format))
             {
 
                 //initialize the selected device for recording
