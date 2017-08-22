@@ -41,11 +41,16 @@ class Diplomatist():
 if __name__ == "__main__":
     diplomatist = Diplomatist()
     audio_file = None
+    if len(sys.argv) > 2:
+        audio_file = sys.argv[1]
+        milliseconds = sys.argv[2]
+        while True:
+            diplomatist.capture_loopback(audio_file, milliseconds)
+            result = diplomatist.transcribe(audio_file)
+            if result:
+                print result
     if len(sys.argv) > 1:
         audio_file = sys.argv[1]
-    if len(sys.argv) > 2:
-        milliseconds = sys.argv[2]
-        diplomatist.capture_loopback(audio_file, milliseconds)
     result = diplomatist.transcribe(audio_file)
     if result:
         print result
