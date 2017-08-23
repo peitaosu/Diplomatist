@@ -24,6 +24,8 @@ class Diplomatist():
                 return recognizer.recognize_google_cloud(audio, cert)
             elif api == 2:
                 return recognizer.recognize_bing(audio, cert)
+            elif api == 3:
+                return recognizer.recognize_houndify(audio, cert.split(",")[0], cert.split(",")[1])
         except speech_recognition.UnknownValueError:
             print "Could Not Understand"
             return False
@@ -53,7 +55,7 @@ def get_options():
     parser.add_option("-t", "--time", dest="time_slice", default=10000, type="int", 
                 help="time slice of each wave file")
     parser.add_option("-a", "--api", dest="api", default=0, type="int",
-                help="0 - CMU Sphinx, 1 - Google Cloud, 2 - Bing API")
+                help="0 - CMU Sphinx, 1 - Google Cloud, 2 - Bing API, 3 - Houndify API")
     parser.add_option("-c", "--cert", dest="cert_file", default=None,
                 help="certification file if is API required")
     (options, args) = parser.parse_args()
