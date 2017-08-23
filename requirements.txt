@@ -1,3 +1,4 @@
 pocketsphinx
 SpeechRecognition
 PyAudio
+google-api-python-client
