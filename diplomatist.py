@@ -1,5 +1,6 @@
 import os, sys, time, subprocess
 import speech_recognition
+from optparse import OptionParser
 
 Loopback_Capture_Path = r"LoopbackCapture\win32\csharp\LoopbackCapture\LoopbackCapture\bin\Debug\LoopbackCapture.exe"
 
@@ -38,19 +39,27 @@ class Diplomatist():
         exit_code = process.wait()
         return exit_code
 
+def get_options():
+    parser = OptionParser()
+    parser.add_option("-m", "--mic", dest="use_mic", action="store_true", default=False, 
+                help="record sounds from microphone")
+    parser.add_option("-f", "--file", dest="audio_file", default="record.wav", 
+                help="capture sounds and save as wave file temporary")
+    parser.add_option("-t", "--time", dest="time_slice", default=10000, type="int", 
+                help="time slice of each wave file")
+    (options, args) = parser.parse_args()
+    return options
+
 if __name__ == "__main__":
     diplomatist = Diplomatist()
-    audio_file = None
-    if len(sys.argv) > 2:
-        audio_file = sys.argv[1]
-        milliseconds = sys.argv[2]
+    opt = get_options()
+    if opt.use_mic:
         while True:
-            diplomatist.capture_loopback(audio_file, milliseconds)
-            result = diplomatist.transcribe(audio_file)
+            result = diplomatist.transcribe()
             if result:
                 print result
-    if len(sys.argv) > 1:
-        audio_file = sys.argv[1]
-    result = diplomatist.transcribe(audio_file)
-    if result:
-        print result
+    while True:
+        diplomatist.capture_loopback(opt.audio_file, opt.time_slice)
+        result = diplomatist.transcribe(opt.audio_file)
+        if result:
+            print result
