@@ -47,7 +47,7 @@ namespace LoopbackCapture
             }
 
             //set wave format
-            WaveFormat wave_format = new WaveFormat(48000, 32, 2, AudioEncoding.Pcm);
+            WaveFormat wave_format = new WaveFormat(44100, 32, 2, AudioEncoding.Pcm);
             int latency = 100;
 
             using (WasapiCapture capture = new WasapiLoopbackCapture(latency, wave_format))
