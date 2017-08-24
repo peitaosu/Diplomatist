@@ -1,6 +1,7 @@
 import os, sys, time, subprocess
 import speech_recognition
 from optparse import OptionParser
+from google.cloud import translate
 
 Loopback_Capture_Path = r"LoopbackCapture\win32\csharp\LoopbackCapture\LoopbackCapture\bin\Debug\LoopbackCapture.exe"
 
@@ -58,6 +59,8 @@ def get_options():
                 help="0 - CMU Sphinx, 1 - Google Cloud, 2 - Bing API, 3 - Houndify API")
     parser.add_option("-c", "--cert", dest="cert_file", default=None,
                 help="certification file if is API required")
+    parser.add_option("-t", "--tran", dest="translate", default="en_zh",
+                help="translate to another language")
     (options, args) = parser.parse_args()
     return options
 
@@ -74,10 +77,15 @@ if __name__ == "__main__":
             cert = open(opt.cert_file, "r").read()
         else:
             cert = opt.cert_file
+        if opt.translate:
+            os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = opt.cert_file
+            translate_client = translate.Client()
     else:
         cert = None
     while True:
         diplomatist.capture_loopback(opt.audio_file, opt.time_slice)
         result = diplomatist.transcribe(opt.api, opt.audio_file, cert)
         if result:
+            if opt.translate:
+                result = translate_client.translate(result, target_language=opt.translate.split("_")[1])['translatedText']
             print result
