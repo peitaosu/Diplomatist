@@ -2,3 +2,4 @@ pocketsphinx
 SpeechRecognition
 PyAudio
 google-api-python-client
+google-cloud-translate
