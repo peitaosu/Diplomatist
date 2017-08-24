@@ -52,7 +52,7 @@ def get_options():
                 help="record sounds from microphone")
     parser.add_option("-f", "--file", dest="audio_file", default="record.wav", 
                 help="capture sounds and save as wave file temporary")
-    parser.add_option("-t", "--time", dest="time_slice", default=10000, type="int", 
+    parser.add_option("-s", "--slice", dest="time_slice", default=10000, type="int", 
                 help="time slice of each wave file")
     parser.add_option("-a", "--api", dest="api", default=0, type="int",
                 help="0 - CMU Sphinx, 1 - Google Cloud, 2 - Bing API, 3 - Houndify API")
