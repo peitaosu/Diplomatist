@@ -1,7 +1,8 @@
 import os, sys, time, subprocess
 import speech_recognition
 from optparse import OptionParser
-from google.cloud import translate
+import google.cloud.translate
+import threading
 
 Loopback_Capture_Path = r"LoopbackCapture\win32\csharp\LoopbackCapture\LoopbackCapture\bin\Debug\LoopbackCapture.exe"
 
@@ -64,6 +65,11 @@ def get_options():
     (options, args) = parser.parse_args()
     return options
 
+def translate(text, language):
+    translate_client = google.cloud.translate.Client()
+    result = translate_client.translate(text, target_language=language)['translatedText']
+    print result
+
 if __name__ == "__main__":
     diplomatist = Diplomatist()
     opt = get_options()
@@ -79,13 +85,13 @@ if __name__ == "__main__":
             cert = opt.cert_file
         if opt.translate:
             os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = opt.cert_file
-            translate_client = translate.Client()
     else:
         cert = None
     while True:
         diplomatist.capture_loopback(opt.audio_file, opt.time_slice)
         result = diplomatist.transcribe(opt.api, opt.audio_file, cert)
         if result:
-            if opt.translate:
-                result = translate_client.translate(result, target_language=opt.translate.split("_")[1])['translatedText']
             print result
+            if opt.translate:
+                thr = threading.Thread(target=translate, args=([result, opt.translate.split("_")[1]]), kwargs={})
+                thr.start()
