@@ -13,6 +13,14 @@ Diplomatist is an auto audio transcribe/translate tool.
 * python 2.x
 * ```pip install -r requirements.txt```
 
+## Before Use
+
+Compile LoopbackCapture under `/LoopbackCapture` and set the path of `LoopbackCapture.exe` as `Loopback_Capture_Path` in `diplomatist.py`.
+
+`/LoopbackCapture` folder included 3 solutions of win32, one console application written by C++, one console application written by C# (recommended) and another one is a .dll library written by C#.
+
+In Unix/Linux/MACOS, please find replacement tools to capture the loopback.
+
 ## Usage
    ```
    > python diplomatist.py -f temp.wav -s 15000 -a 1 -c cert.json -t en_zh
