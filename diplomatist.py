@@ -8,7 +8,7 @@ Loopback_Capture_Path = r"LoopbackCapture\win32\csharp\LoopbackCapture\LoopbackC
 
 class Diplomatist():
     def __init__(self):
-        pass
+        self.translate_client = google.cloud.translate.Client()
     
     def transcribe(self, api=0, audio_file=None, cert=None):
         recognizer = speech_recognition.Recognizer()
@@ -47,6 +47,9 @@ class Diplomatist():
         process = subprocess.Popen("{} {} {}".format(Loopback_Capture_Path, audio_file, milliseconds), stdout=subprocess.PIPE)
         exit_code = process.wait()
         return exit_code
+    
+    def translate(self, text, language):
+        print self.translate_client.translate(text, target_language=language)['translatedText']
 
 def get_options():
     parser = OptionParser()
@@ -65,19 +68,9 @@ def get_options():
     (options, args) = parser.parse_args()
     return options
 
-def translate(text, language):
-    translate_client = google.cloud.translate.Client()
-    result = translate_client.translate(text, target_language=language)['translatedText']
-    print result
 
 if __name__ == "__main__":
-    diplomatist = Diplomatist()
     opt = get_options()
-    if opt.use_mic:
-        while True:
-            result = diplomatist.transcribe()
-            if result:
-                print result
     if opt.cert_file:
         if os.path.isfile(opt.cert_file):
             cert = open(opt.cert_file, "r").read()
@@ -87,11 +80,17 @@ if __name__ == "__main__":
             os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = opt.cert_file
     else:
         cert = None
+    diplomatist = Diplomatist()
+    if opt.use_mic:
+        while True:
+            result = diplomatist.transcribe()
+            if result:
+                print result
     while True:
         diplomatist.capture_loopback(opt.audio_file, opt.time_slice)
         result = diplomatist.transcribe(opt.api, opt.audio_file, cert)
         if result:
             print result
             if opt.translate:
-                thr = threading.Thread(target=translate, args=([result, opt.translate.split("_")[1]]), kwargs={})
+                thr = threading.Thread(target=diplomatist.translate, args=([result, opt.translate.split("_")[1]]), kwargs={})
                 thr.start()
