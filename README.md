@@ -1,5 +1,7 @@
 # Project Diplomatist
 
+[![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/peitaosu/Diplomatist/master/LICENSE)
+
 ## What is Diplomatist ?
 
 Diplomatist is an auto audio transcribe/translate tool.
