@@ -21,7 +21,7 @@ Compile LoopbackCapture under `/LoopbackCapture` and set the path of `LoopbackCa
 
 `/LoopbackCapture` folder included 3 solutions of win32, one console application written by C++, one console application written by C# (recommended) and another one is a .dll library written by C#.
 
-In Unix/Linux/MACOS, please find replacement tools to capture the loopback.
+In Unix/Linux/MacOS, please find replacement tools to capture the loopback.
 
 ## Usage
    ```
