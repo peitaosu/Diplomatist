@@ -17,11 +17,17 @@ Diplomatist is an auto audio transcribe/translate tool.
 
 ## Before Use
 
+*LoopbackCapture*
+
 Compile LoopbackCapture under `/LoopbackCapture` and set the path of `LoopbackCapture.exe` as `Loopback_Capture_Path` in `diplomatist.py`.
 
 `/LoopbackCapture` folder included 3 solutions of win32, one console application written by C++, one console application written by C# (recommended) and another one is a .dll library written by C#.
 
 In Unix/Linux/MacOS, please find replacement tools to capture the loopback.
+
+*Credentials*
+
+Most of APIs (such as Google Cloud API, Bing API and Houndify API) required a credentials to use the API. You can register a account in the website and get the credentials file or keys. Most of them have some free quota each month.
 
 ## Usage
    ```
