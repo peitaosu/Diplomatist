@@ -10,7 +10,7 @@ class Diplomatist():
     def __init__(self):
         self.translate_client = google.cloud.translate.Client()
     
-    def transcribe(self, api=0, audio_file=None, cert=None):
+    def transcribe(self, api=0, audio_file=None, cred=None):
         recognizer = speech_recognition.Recognizer()
         if audio_file:
             with speech_recognition.AudioFile(audio_file) as source:
@@ -23,11 +23,11 @@ class Diplomatist():
             if api == 0:
                 return recognizer.recognize_sphinx(audio)
             elif api == 1:
-                return recognizer.recognize_google_cloud(audio, cert)
+                return recognizer.recognize_google_cloud(audio, cred)
             elif api == 2:
-                return recognizer.recognize_bing(audio, cert)
+                return recognizer.recognize_bing(audio, cred)
             elif api == 3:
-                return recognizer.recognize_houndify(audio, cert.split(",")[0], cert.split(",")[1])
+                return recognizer.recognize_houndify(audio, cred.split(",")[0], cred.split(",")[1])
         except speech_recognition.UnknownValueError:
             print "Could Not Understand"
             return False
@@ -61,8 +61,8 @@ def get_options():
                 help="time slice of each wave file")
     parser.add_option("-a", "--api", dest="api", default=0, type="int",
                 help="0 - CMU Sphinx, 1 - Google Cloud, 2 - Bing API, 3 - Houndify API")
-    parser.add_option("-c", "--cert", dest="cert_file", default=None,
-                help="certification file if is API required")
+    parser.add_option("-c", "--cred", dest="credential", default=None,
+                help="credential file if is API required")
     parser.add_option("-t", "--tran", dest="translate", default="en_zh",
                 help="translate to another language")
     (options, args) = parser.parse_args()
@@ -71,15 +71,15 @@ def get_options():
 
 if __name__ == "__main__":
     opt = get_options()
-    if opt.cert_file:
-        if os.path.isfile(opt.cert_file):
-            cert = open(opt.cert_file, "r").read()
+    if opt.credential:
+        if os.path.isfile(opt.credential):
+            cred = open(opt.credential, "r").read()
         else:
-            cert = opt.cert_file
+            cred = opt.credential
         if opt.translate:
-            os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = opt.cert_file
+            os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = opt.credential
     else:
-        cert = None
+        cred = None
     diplomatist = Diplomatist()
     if opt.use_mic:
         while True:
@@ -88,7 +88,7 @@ if __name__ == "__main__":
                 print result
     while True:
         diplomatist.capture_loopback(opt.audio_file, opt.time_slice)
-        result = diplomatist.transcribe(opt.api, opt.audio_file, cert)
+        result = diplomatist.transcribe(opt.api, opt.audio_file, cred)
         if result:
             print result
             if opt.translate:

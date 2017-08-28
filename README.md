@@ -44,8 +44,8 @@ Most of APIs (such as Google Cloud API, Bing API and Houndify API) required a cr
                             time slice of each wave file
     -a API, --api=API     0 - CMU Sphinx, 1 - Google Cloud, 2 - Bing API, 3 -
                             Houndify API
-    -c CERT_FILE, --cert=CERT_FILE
-                            certification file if is API required
+    -c CREDENTIAL, --cred=CREDENTIAL
+                            credential file if is API required
     -t TRANSLATE, --tran=TRANSLATE
                             translate to another language
    ```
