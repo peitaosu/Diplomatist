@@ -49,7 +49,13 @@ class Diplomatist():
         return exit_code
     
     def translate(self, text, language):
-        print self.translate_client.translate(text, target_language=language)['translatedText']
+        return self.translate_client.translate(text, target_language=language)['translatedText']
+    
+    def async_transcribe_translate(self, api=0, audio_file=None, cred=None, language="zh"):
+        transc = self.transcribe(api, audio_file, cred)
+        print transc
+        transl = self.translate(transc, language)
+        print transl
 
 def get_options():
     parser = OptionParser()
@@ -88,9 +94,12 @@ if __name__ == "__main__":
                 print result
     while True:
         diplomatist.capture_loopback(opt.audio_file, opt.time_slice)
-        result = diplomatist.transcribe(opt.api, opt.audio_file, cred)
-        if result:
-            print result
-            if opt.translate:
-                thr = threading.Thread(target=diplomatist.translate, args=([result, opt.translate.split("_")[1]]), kwargs={})
-                thr.start()
+        if opt.translate:
+            diplomatist.async_transcribe_translate(opt.api, opt.audio_file, cred, opt.translate.split("_")[1])
+        else:
+            result = diplomatist.transcribe(opt.api, opt.audio_file, cred)
+            if result:
+                print result
+                if opt.translate:
+                    thr = threading.Thread(target=diplomatist.translate, args=([result, opt.translate.split("_")[1]]), kwargs={})
+                    thr.start()
