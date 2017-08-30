@@ -12,13 +12,8 @@ class Diplomatist():
     
     def transcribe(self, api=0, audio_file=None, cred=None):
         recognizer = speech_recognition.Recognizer()
-        if audio_file:
-            with speech_recognition.AudioFile(audio_file) as source:
-                audio = recognizer.record(source)
-        else:
-            with speech_recognition.Microphone() as source:
-                print "Say something!"
-                audio = recognizer.listen(source)
+        with speech_recognition.AudioFile(audio_file) as source:
+            audio = recognizer.record(source)
         try:
             if api == 0:
                 return recognizer.recognize_sphinx(audio)
@@ -35,11 +30,13 @@ class Diplomatist():
             print "Request Error: {0}".format(e)
             return False
     
-    def record(self, audio_file):
+    def record(self, audio_file=None):
         recognizer = speech_recognition.Recognizer()
         with speech_recognition.Microphone() as source:
             print "Say something!"
             audio = recognizer.listen(source)
+        if audio_file is None:
+            audio_file = "record.wav"
         with open(audio_file, "wb") as f:
             f.write(audio.get_wav_data())
     
@@ -84,16 +81,14 @@ if __name__ == "__main__":
             cred = opt.credential
         if opt.translate:
             os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = opt.credential
-    else:
-        cred = None
+        else:
+            cred = None
     diplomatist = Diplomatist()
-    if opt.use_mic:
-        while True:
-            result = diplomatist.transcribe()
-            if result:
-                print result
     while True:
-        diplomatist.capture_loopback(opt.audio_file, opt.time_slice)
+        if opt.use_mic:
+            diplomatist.record(opt.audio_file)
+        else:
+            diplomatist.capture_loopback(opt.audio_file, opt.time_slice)
         if opt.translate:
             diplomatist.async_transcribe_translate(opt.api, opt.audio_file, cred, opt.translate.split("_")[1])
         else:
