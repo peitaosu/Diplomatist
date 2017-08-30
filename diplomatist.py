@@ -8,7 +8,8 @@ Loopback_Capture_Path = r"LoopbackCapture\win32\csharp\LoopbackCapture\LoopbackC
 
 class Diplomatist():
     def __init__(self):
-        self.translate_client = google.cloud.translate.Client()
+        if "GOOGLE_APPLICATION_CREDENTIALS" in os.environ:
+            self.translate_client = google.cloud.translate.Client()
     
     def transcribe(self, api=0, audio_file=None, cred=None):
         recognizer = speech_recognition.Recognizer()
@@ -46,7 +47,8 @@ class Diplomatist():
         return exit_code
     
     def translate(self, text, language):
-        return self.translate_client.translate(text, target_language=language)['translatedText']
+        if "GOOGLE_APPLICATION_CREDENTIALS" in os.environ:
+            return self.translate_client.translate(text, target_language=language)['translatedText']
     
     def async_transcribe_translate(self, api=0, audio_file=None, cred=None, language="zh"):
         transc = self.transcribe(api, audio_file, cred)
