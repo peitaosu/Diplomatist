@@ -86,11 +86,16 @@ if __name__ == "__main__":
         else:
             cred = None
     diplomatist = Diplomatist()
+    init_time = 0
     while True:
+        start_time = time.time()
         if opt.use_mic:
             diplomatist.record(opt.audio_file)
         else:
             diplomatist.capture_loopback(opt.audio_file, opt.time_slice)
+        end_time = time.time()
+        print "{} -> {}".format(time.strftime("%H:%M:%S", time.gmtime(init_time)), time.strftime("%H:%M:%S", time.gmtime(end_time - start_time + init_time)))
+        init_time = end_time - start_time + init_time
         if opt.translate:
             diplomatist.async_transcribe_translate(opt.api, opt.audio_file, cred, opt.translate.split("_")[1])
         else:
