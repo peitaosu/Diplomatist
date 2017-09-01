@@ -50,6 +50,9 @@ class Diplomatist():
         if "GOOGLE_APPLICATION_CREDENTIALS" in os.environ:
             return self.translate_client.translate(text, target_language=language)['translatedText']
     
+    def async_transcribe(self, api=0, audio_file=None, cred=None):
+        print self.transcribe(api, audio_file, cred)
+
     def async_transcribe_translate(self, api=0, audio_file=None, cred=None, language="zh"):
         transc = self.transcribe(api, audio_file, cred)
         print transc
@@ -87,6 +90,9 @@ if __name__ == "__main__":
             cred = None
     diplomatist = Diplomatist()
     init_time = 0
+    temp_folder = os.path.join(os.path.dirname(opt.audio_file), "temp")
+    if not os.path.isdir(temp_folder):
+        os.mkdir(temp_folder)
     while True:
         start_time = time.time()
         if opt.use_mic:
@@ -96,12 +102,12 @@ if __name__ == "__main__":
         end_time = time.time()
         print "{} -> {}".format(time.strftime("%H:%M:%S", time.gmtime(init_time)), time.strftime("%H:%M:%S", time.gmtime(end_time - start_time + init_time)))
         init_time = end_time - start_time + init_time
+        saved_file_name = str(time.time()) + ".wav"
+        saved_audio_file = os.path.join(temp_folder, saved_file_name)
+        os.rename(opt.audio_file, saved_audio_file)
         if opt.translate:
-            diplomatist.async_transcribe_translate(opt.api, opt.audio_file, cred, opt.translate.split("_")[1])
+            thr = threading.Thread(target=diplomatist.async_transcribe_translate, args=([opt.api, saved_audio_file, cred, opt.translate.split("_")[1]]), kwargs={})
+            thr.start()
         else:
-            result = diplomatist.transcribe(opt.api, opt.audio_file, cred)
-            if result:
-                print result
-                if opt.translate:
-                    thr = threading.Thread(target=diplomatist.translate, args=([result, opt.translate.split("_")[1]]), kwargs={})
-                    thr.start()
+            thr = threading.Thread(target=diplomatist.async_transcribe, args=([opt.api, saved_audio_file, cred]), kwargs={})
+            thr.start()
