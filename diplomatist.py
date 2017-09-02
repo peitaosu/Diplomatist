@@ -90,9 +90,9 @@ if __name__ == "__main__":
             cred = None
     diplomatist = Diplomatist()
     init_time = 0
-    temp_folder = os.path.join(os.path.dirname(opt.audio_file), "temp")
-    if not os.path.isdir(temp_folder):
-        os.mkdir(temp_folder)
+    records_folder = os.path.join(os.path.dirname(opt.audio_file), "records")
+    if not os.path.isdir(records_folder):
+        os.mkdir(records_folder)
     while True:
         start_time = time.time()
         if opt.use_mic:
@@ -103,7 +103,7 @@ if __name__ == "__main__":
         print "{} -> {}".format(time.strftime("%H:%M:%S", time.gmtime(init_time)), time.strftime("%H:%M:%S", time.gmtime(end_time - start_time + init_time)))
         init_time = end_time - start_time + init_time
         saved_file_name = str(time.time()) + ".wav"
-        saved_audio_file = os.path.join(temp_folder, saved_file_name)
+        saved_audio_file = os.path.join(records_folder, saved_file_name)
         os.rename(opt.audio_file, saved_audio_file)
         if opt.translate:
             thr = threading.Thread(target=diplomatist.async_transcribe_translate, args=([opt.api, saved_audio_file, cred, opt.translate.split("_")[1]]), kwargs={})
