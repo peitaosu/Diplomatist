@@ -4,8 +4,6 @@ from optparse import OptionParser
 import google.cloud.translate
 import threading
 
-Loopback_Capture_Path = r"LoopbackCapture\win32\csharp\LoopbackCapture\LoopbackCapture\bin\Debug\LoopbackCapture.exe"
-
 class Diplomatist():
     def __init__(self):
         if "GOOGLE_APPLICATION_CREDENTIALS" in os.environ:
@@ -42,6 +40,9 @@ class Diplomatist():
             f.write(audio.get_wav_data())
     
     def capture_loopback(self, audio_file, milliseconds):
+        if "LOOPBACK_CAPTURE" not in os.environ:
+            print "Please set the %LOOPBACK_CAPTURE% before you start to capture."
+        Loopback_Capture_Path = os.environ["LOOPBACK_CAPTURE"]
         process = subprocess.Popen("{} {} {}".format(Loopback_Capture_Path, audio_file, milliseconds), stdout=subprocess.PIPE)
         exit_code = process.wait()
         return exit_code
@@ -78,6 +79,7 @@ def get_options():
 
 
 if __name__ == "__main__":
+    os.environ["LOOPBACK_CAPTURE"] = r"LoopbackCapture\win32\csharp\LoopbackCapture\LoopbackCapture\bin\Debug\LoopbackCapture.exe"
     opt = get_options()
     if opt.credential:
         if os.path.isfile(opt.credential):
