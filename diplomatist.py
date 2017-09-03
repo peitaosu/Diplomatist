@@ -72,7 +72,7 @@ def get_options():
                 help="0 - CMU Sphinx, 1 - Google Cloud, 2 - Bing API, 3 - Houndify API")
     parser.add_option("-c", "--cred", dest="credential", default=None,
                 help="credential file if is API required")
-    parser.add_option("-t", "--tran", dest="translate", default="en_zh",
+    parser.add_option("-t", "--tran", dest="translate", default="zh",
                 help="translate to another language")
     (options, args) = parser.parse_args()
     return options
@@ -108,7 +108,7 @@ if __name__ == "__main__":
         saved_audio_file = os.path.join(records_folder, saved_file_name)
         os.rename(opt.audio_file, saved_audio_file)
         if opt.translate:
-            thr = threading.Thread(target=diplomatist.async_transcribe_translate, args=([opt.api, saved_audio_file, cred, opt.translate.split("_")[1]]), kwargs={})
+            thr = threading.Thread(target=diplomatist.async_transcribe_translate, args=([opt.api, saved_audio_file, cred, opt.translate]), kwargs={})
             thr.start()
         else:
             thr = threading.Thread(target=diplomatist.async_transcribe, args=([opt.api, saved_audio_file, cred]), kwargs={})
