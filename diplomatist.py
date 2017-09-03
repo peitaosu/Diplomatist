@@ -9,17 +9,17 @@ class Diplomatist():
         if "GOOGLE_APPLICATION_CREDENTIALS" in os.environ:
             self.translate_client = google.cloud.translate.Client()
     
-    def transcribe(self, api=0, audio_file=None, cred=None):
+    def transcribe(self, api=0, audio_file=None, cred=None, language="en-US"):
         recognizer = speech_recognition.Recognizer()
         with speech_recognition.AudioFile(audio_file) as source:
             audio = recognizer.record(source)
         try:
             if api == 0:
-                return recognizer.recognize_sphinx(audio)
+                return recognizer.recognize_sphinx(audio, language)
             elif api == 1:
-                return recognizer.recognize_google_cloud(audio, cred)
+                return recognizer.recognize_google_cloud(audio, cred, language)
             elif api == 2:
-                return recognizer.recognize_bing(audio, cred)
+                return recognizer.recognize_bing(audio, cred, language)
             elif api == 3:
                 return recognizer.recognize_houndify(audio, cred.split(",")[0], cred.split(",")[1])
         except speech_recognition.UnknownValueError:
@@ -51,13 +51,13 @@ class Diplomatist():
         if "GOOGLE_APPLICATION_CREDENTIALS" in os.environ:
             return self.translate_client.translate(text, target_language=language)['translatedText']
     
-    def async_transcribe(self, api=0, audio_file=None, cred=None):
-        print self.transcribe(api, audio_file, cred)
+    def async_transcribe(self, api=0, audio_file=None, cred=None, language="en-US"):
+        print self.transcribe(api, audio_file, cred, language)
 
-    def async_transcribe_translate(self, api=0, audio_file=None, cred=None, language="zh"):
-        transc = self.transcribe(api, audio_file, cred)
+    def async_transcribe_translate(self, api=0, audio_file=None, cred=None, transc_lan="en-US", transl_lan="zh"):
+        transc = self.transcribe(api, audio_file, cred, transc_lan)
         print transc
-        transl = self.translate(transc, language)
+        transl = self.translate(transc, transl_lan)
         print transl
 
 def get_options():
@@ -72,6 +72,8 @@ def get_options():
                 help="0 - CMU Sphinx, 1 - Google Cloud, 2 - Bing API, 3 - Houndify API")
     parser.add_option("-c", "--cred", dest="credential", default=None,
                 help="credential file if is API required")
+    parser.add_option("-l", "--lan", dest="language", default="en-US",
+                help="language which to be transcribed")
     parser.add_option("-t", "--tran", dest="translate", default="zh",
                 help="translate to another language")
     (options, args) = parser.parse_args()
@@ -108,8 +110,8 @@ if __name__ == "__main__":
         saved_audio_file = os.path.join(records_folder, saved_file_name)
         os.rename(opt.audio_file, saved_audio_file)
         if opt.translate:
-            thr = threading.Thread(target=diplomatist.async_transcribe_translate, args=([opt.api, saved_audio_file, cred, opt.translate]), kwargs={})
+            thr = threading.Thread(target=diplomatist.async_transcribe_translate, args=([opt.api, saved_audio_file, cred, opt.language, opt.translate]), kwargs={})
             thr.start()
         else:
-            thr = threading.Thread(target=diplomatist.async_transcribe, args=([opt.api, saved_audio_file, cred]), kwargs={})
+            thr = threading.Thread(target=diplomatist.async_transcribe, args=([opt.api, saved_audio_file, cred, opt.language]), kwargs={})
             thr.start()
