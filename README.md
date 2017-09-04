@@ -46,6 +46,8 @@ Most of APIs (such as Google Cloud API, Bing API and Houndify API) required a cr
                             Houndify API
     -c CREDENTIAL, --cred=CREDENTIAL
                             credential file if is API required
+    -l LANGUAGE, --lan=LANGUAGE
+                            language which to be transcribed
     -t TRANSLATE, --tran=TRANSLATE
                             translate to another language
    ```
