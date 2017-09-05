@@ -74,7 +74,7 @@ def get_options():
                 help="credential file if is API required")
     parser.add_option("-l", "--lan", dest="language", default="en-US",
                 help="language which to be transcribed")
-    parser.add_option("-t", "--tran", dest="translate", default="zh",
+    parser.add_option("-t", "--tran", dest="translate", default=None,
                 help="translate to another language")
     (options, args) = parser.parse_args()
     return options
