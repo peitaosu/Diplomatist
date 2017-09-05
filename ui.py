@@ -19,9 +19,9 @@ diplomatist = Diplomatist()
 
 diplomatist_ui = tkinter.Tk()
 transc_str = tkinter.StringVar()
-transc_label = tkinter.Label(diplomatist_ui, textvariable=transc_str).pack()
+transc_label = tkinter.Label(diplomatist_ui, textvariable=transc_str).pack(side=tkinter.TOP)
 transl_str = tkinter.StringVar()
-transl_label = tkinter.Label(diplomatist_ui, textvariable=transl_str).pack()
+transl_label = tkinter.Label(diplomatist_ui, textvariable=transl_str).pack(side=tkinter.BOTTOM)
 
 def async_transcribe(api=0, audio_file=None, cred=None, language="en-US"):
     transc = diplomatist.transcribe(api, audio_file, cred, language)
@@ -35,7 +35,7 @@ def async_transcribe_translate(api=0, audio_file=None, cred=None, transc_lan="en
         transc = "Cannot Be Transcribed!"
     transc_str.set(transc)
     transl = diplomatist.translate(transc, transl_lan)
-    transc_str.set(transl)
+    transl_str.set(transl)
 
 def dip_thread():
     init_time = 0
