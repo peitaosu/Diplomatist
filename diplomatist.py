@@ -69,8 +69,8 @@ def get_options():
     parser = OptionParser()
     parser.add_option("-m", "--mic", dest="use_mic", action="store_true", default=False, 
                 help="record sounds from microphone")
-    parser.add_option("-f", "--file", dest="audio_file", default="record.wav", 
-                help="capture sounds and save as wave file temporary")
+    parser.add_option("-f", "--file", dest="audio_file", default=None, 
+                help="audio file which to be transcribed and translated")
     parser.add_option("-s", "--slice", dest="time_slice", default=10000, type="int", 
                 help="time slice of each wave file")
     parser.add_option("-a", "--api", dest="api", default=0, type="int",
@@ -98,22 +98,28 @@ if __name__ == "__main__":
         else:
             cred = None
     diplomatist = Diplomatist()
+    if opt.audio_file:
+        if opt.translate:
+            diplomatist.async_transcribe_translate(opt.api, opt.audio_file, cred, opt.language, opt.translate)
+        else:
+            diplomatist.async_transcribe(opt.api, opt.audio_file, cred, opt.language)
+        sys.exit()
     init_time = 0
-    records_folder = os.path.join(os.path.dirname(opt.audio_file), "records")
+    records_folder = "records"
     if not os.path.isdir(records_folder):
         os.mkdir(records_folder)
     while True:
         start_time = time.time()
         if opt.use_mic:
-            diplomatist.record(opt.audio_file)
+            diplomatist.record("record.wav")
         else:
-            diplomatist.capture_loopback(opt.audio_file, opt.time_slice)
+            diplomatist.capture_loopback("record.wav", opt.time_slice)
         end_time = time.time()
         print "{} -> {}".format(time.strftime("%H:%M:%S", time.gmtime(init_time)), time.strftime("%H:%M:%S", time.gmtime(end_time - start_time + init_time)))
         init_time = end_time - start_time + init_time
         saved_file_name = str(time.time()) + ".wav"
         saved_audio_file = os.path.join(records_folder, saved_file_name)
-        os.rename(opt.audio_file, saved_audio_file)
+        os.rename("record.wav", saved_audio_file)
         if opt.translate:
             thr = threading.Thread(target=diplomatist.async_transcribe_translate, args=([opt.api, saved_audio_file, cred, opt.language, opt.translate]), kwargs={})
             thr.start()
