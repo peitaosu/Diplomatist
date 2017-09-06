@@ -31,7 +31,7 @@ Most of APIs (such as Google Cloud API, Bing API and Houndify API) required a cr
 
 ## Usage
    ```
-   > python diplomatist.py -f temp.wav -s 15000 -a 1 -c cert.json -t en_zh
+   > python diplomatist.py -s 15000 -a 1 -c cert.json -l en-US -t zh
 
     Usage: diplomatist.py [options]
 
