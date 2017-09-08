@@ -51,3 +51,10 @@ Most of APIs (such as Google Cloud API, Bing API and Houndify API) required a cr
     -t TRANSLATE, --tran=TRANSLATE
                             translate to another language
    ```
+
+## UI
+
+Currently, Diplomatist has a very simple UI based on Tkinter, you can use it through `ui.py`, arguments are same as `diplomatist.py`:
+```
+> python ui.py -s 15000 -a 1 -c cert.json -l en-US -t zh
+```
