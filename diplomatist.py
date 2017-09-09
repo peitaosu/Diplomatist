@@ -54,13 +54,13 @@ class Diplomatist():
     def async_transcribe(self, api=0, audio_file=None, cred=None, language="en-US"):
         transc = self.transcribe(api, audio_file, cred, language)
         if transc == False:
-            transc = "Cannot Be Transcribed!"
+            transc = "Could Not Be Transcribed!"
         print transc
 
     def async_transcribe_translate(self, api=0, audio_file=None, cred=None, transc_lan="en-US", transl_lan="zh"):
         transc = self.transcribe(api, audio_file, cred, transc_lan)
         if transc == False:
-            transc = "Cannot Be Transcribed!"
+            transc = "Could Not Be Transcribed!"
         print transc
         transl = self.translate(transc, transl_lan)
         print transl

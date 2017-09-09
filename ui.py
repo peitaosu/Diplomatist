@@ -26,13 +26,13 @@ transl_label = tkinter.Label(diplomatist_ui, textvariable=transl_str).pack(side=
 def async_transcribe(api=0, audio_file=None, cred=None, language="en-US"):
     transc = diplomatist.transcribe(api, audio_file, cred, language)
     if transc == False:
-        transc = "Cannot Be Transcribed!"
+        transc = "Could Not Be Transcribed!"
     transc_str.set(transc)
 
 def async_transcribe_translate(api=0, audio_file=None, cred=None, transc_lan="en-US", transl_lan="zh"):
     transc = diplomatist.transcribe(api, audio_file, cred, transc_lan)
     if transc == False:
-        transc = "Cannot Be Transcribed!"
+        transc = "Could Not Be Transcribed!"
     transc_str.set(transc)
     transl = diplomatist.translate(transc, transl_lan)
     transl_str.set(transl)
