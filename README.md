@@ -27,7 +27,11 @@ In Unix/Linux/MacOS, please find replacement tools to capture the loopback.
 
 *Credentials*
 
-Most of APIs (such as Google Cloud API, Bing API and Houndify API) required a credentials to use the API. You can register a account in the website and get the credentials file or keys. Most of them have some free quota each month.
+Most of APIs required a credentials to use the API. You can register a account in the website and get the credentials file or keys. Most of them have some free quota each month.
+
+* Google Cloud API: https://cloud.google.com/speech/
+* Bing API: https://azure.microsoft.com/en-ca/pricing/details/cognitive-services/speech-api/
+* Houndify API: https://www.houndify.com
 
 ## Usage
    ```
