@@ -8,6 +8,8 @@ class Diplomatist():
     def __init__(self):
         if "GOOGLE_APPLICATION_CREDENTIALS" in os.environ:
             self.translate_client = google.cloud.translate.Client()
+        if "OUT_SRT" in os.environ:
+            self.out = open(os.environ["OUT_SRT"], "a")
     
     def transcribe(self, api=0, audio_file=None, cred=None, language="en-US"):
         recognizer = speech_recognition.Recognizer()
@@ -55,14 +57,20 @@ class Diplomatist():
         transc = self.transcribe(api, audio_file, cred, language)
         if transc == False:
             transc = "Could Not Be Transcribed!"
+        if hasattr(self, "out"):
+            self.out.write(transc + "\n")
         print transc
 
     def async_transcribe_translate(self, api=0, audio_file=None, cred=None, transc_lan="en-US", transl_lan="zh"):
         transc = self.transcribe(api, audio_file, cred, transc_lan)
         if transc == False:
             transc = "Could Not Be Transcribed!"
+        if hasattr(self, "out"):
+            self.out.write(transc + "\n")
         print transc
         transl = self.translate(transc, transl_lan)
+        if hasattr(self, "out"):
+            self.out.write(transl + "\n")
         print transl
     
     def keep_running(self, record_file, cred, options):
@@ -74,7 +82,10 @@ class Diplomatist():
             else:
                 self.capture_loopback(record_file, options.time_slice)
             end_time = time.time()
-            print "{} --> {}".format(time.strftime("%H:%M:%S", time.gmtime(init_time)), time.strftime("%H:%M:%S", time.gmtime(end_time - start_time + init_time)))
+            time_str = "{} --> {}".format(time.strftime("%H:%M:%S", time.gmtime(init_time)), time.strftime("%H:%M:%S", time.gmtime(end_time - start_time + init_time)))
+            if hasattr(self, "out"):
+                self.out.write(time_str + "\n")
+            print time_str
             init_time = end_time - start_time + init_time
             saved_file_name = str(time.time()) + ".wav"
             saved_audio_file = os.path.join(records_folder, saved_file_name)
@@ -108,6 +119,8 @@ def get_options():
                 help="language which to be transcribed")
     parser.add_option("-t", "--tran", dest="translate", default=None,
                 help="translate to another language")
+    parser.add_option("-o", "--out", dest="output", default=None,
+                help="output the result as SRT file")
     (options, args) = parser.parse_args()
     return options
 
@@ -124,6 +137,8 @@ if __name__ == "__main__":
             os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = opt.credential
         else:
             cred = None
+    if opt.output:
+        os.environ["OUT_SRT"] = opt.output
     diplomatist = Diplomatist()
     if opt.audio_file:
         diplomatist.run_one_time(cred, opt)
