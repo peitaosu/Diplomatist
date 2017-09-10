@@ -74,7 +74,7 @@ class Diplomatist():
             else:
                 self.capture_loopback(record_file, options.time_slice)
             end_time = time.time()
-            print "{} -> {}".format(time.strftime("%H:%M:%S", time.gmtime(init_time)), time.strftime("%H:%M:%S", time.gmtime(end_time - start_time + init_time)))
+            print "{} --> {}".format(time.strftime("%H:%M:%S", time.gmtime(init_time)), time.strftime("%H:%M:%S", time.gmtime(end_time - start_time + init_time)))
             init_time = end_time - start_time + init_time
             saved_file_name = str(time.time()) + ".wav"
             saved_audio_file = os.path.join(records_folder, saved_file_name)
