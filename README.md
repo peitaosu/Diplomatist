@@ -10,6 +10,7 @@ Diplomatist is an auto audio transcribe/translate tool.
 * Audio Transcription
 * Text Translation
 * Loopback Capture (Windows)
+* Output as SRT
 
 ## Requirements
 * python 2.x
@@ -35,7 +36,7 @@ Most of APIs required a credentials to use the API. You can register a account i
 
 ## Usage
    ```
-   > python diplomatist.py -s 15000 -a 1 -c cert.json -l en-US -t zh
+   > python diplomatist.py -s 15000 -a 1 -c cert.json -l en-US -t zh -o sub.srt
 
     Usage: diplomatist.py [options]
 
@@ -54,11 +55,13 @@ Most of APIs required a credentials to use the API. You can register a account i
                             language which to be transcribed
     -t TRANSLATE, --tran=TRANSLATE
                             translate to another language
+    -o OUTPUT, --out=OUTPUT
+                            output the result as SRT file
    ```
 
 ## UI
 
 Currently, Diplomatist has a very simple UI based on Tkinter, you can use it through `ui.py`, arguments are same as `diplomatist.py`:
 ```
-> python ui.py -s 15000 -a 1 -c cert.json -l en-US -t zh
+> python ui.py -s 15000 -a 1 -c cert.json -l en-US -t zh -o sub.srt
 ```
