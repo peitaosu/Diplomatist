@@ -14,6 +14,8 @@ if opt.credential:
         os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = opt.credential
     else:
         cred = None
+if opt.output:
+    os.environ["OUT_SRT"] = opt.output
 
 diplomatist = Diplomatist()
 
@@ -27,14 +29,20 @@ def async_transcribe(api=0, audio_file=None, cred=None, language="en-US"):
     transc = diplomatist.transcribe(api, audio_file, cred, language)
     if transc == False:
         transc = "Could Not Be Transcribed!"
+    if hasattr(diplomatist, "out"):
+        diplomatist.out.write(transc + "\n")
     transc_str.set(transc)
 
 def async_transcribe_translate(api=0, audio_file=None, cred=None, transc_lan="en-US", transl_lan="zh"):
     transc = diplomatist.transcribe(api, audio_file, cred, transc_lan)
     if transc == False:
         transc = "Could Not Be Transcribed!"
+    if hasattr(diplomatist, "out"):
+        diplomatist.out.write(transc + "\n")
     transc_str.set(transc)
     transl = diplomatist.translate(transc, transl_lan)
+    if hasattr(diplomatist, "out"):
+        diplomatist.out.write(transl + "\n")
     transl_str.set(transl)
 
 def keep_running():
@@ -50,7 +58,10 @@ def keep_running():
         else:
             diplomatist.capture_loopback(record_file, opt.time_slice)
         end_time = time.time()
-        print "{} -> {}".format(time.strftime("%H:%M:%S", time.gmtime(init_time)), time.strftime("%H:%M:%S", time.gmtime(end_time - start_time + init_time)))
+        time_str = "{} --> {}".format(time.strftime("%H:%M:%S", time.gmtime(init_time)), time.strftime("%H:%M:%S", time.gmtime(end_time - start_time + init_time)))
+        if hasattr(diplomatist, "out"):
+            diplomatist.out.write(time_str + "\n")
+        print time_str
         init_time = end_time - start_time + init_time
         saved_file_name = str(time.time()) + ".wav"
         saved_audio_file = os.path.join(records_folder, saved_file_name)
