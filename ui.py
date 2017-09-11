@@ -20,6 +20,7 @@ if opt.output:
 diplomatist = Diplomatist()
 
 diplomatist_ui = tkinter.Tk()
+diplomatist_ui.attributes("-alpha", 0.8)
 transc_str = tkinter.StringVar()
 transc_label = tkinter.Label(diplomatist_ui, textvariable=transc_str).pack(side=tkinter.TOP)
 transl_str = tkinter.StringVar()
