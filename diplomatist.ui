@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+    <class>MainWindow</class>
+        <widget class="QMainWindow" name="MainWindow">
+            <property name="geometry">
+                <rect>
+                    <x>0</x>
+                    <y>0</y>
+                    <width>640</width>
+                    <height>240</height>
+                </rect>
+            </property>
+            <property name="windowTitle">
+                <string>Diplomatist</string>
+            </property>
+            <widget class="QWidget" name="centralWidget">
+                <widget class="QWidget" name="verticalLayoutWidget">
+                    <property name="geometry">
+                        <rect>
+                            <x>0</x>
+                            <y>0</y>
+                            <width>640</width>
+                            <height>240</height>
+                        </rect>
+                    </property>
+                    <layout class="QVBoxLayout" name="verticalLayout">
+                        <item>
+                            <widget class="QTextBrowser" name="text_transc">
+                                <property name="font">
+                                    <font>
+                                        <family>Consolas</family>
+                                        <pointsize>18</pointsize>
+                                    </font>
+                                </property>
+                            </widget>
+                        </item>
+                        <item>
+                            <widget class="QTextBrowser" name="text_transl">
+                                <property name="font">
+                                    <font>
+                                        <family>Microsoft YaHei UI</family>
+                                        <pointsize>18</pointsize>
+                                    </font>
+                                </property>
+                            </widget>
+                        </item>
+                    </layout>
+                </widget>
+            </widget>
+        </widget>
+    <layoutdefault spacing="6" margin="11"/>
+</ui>
