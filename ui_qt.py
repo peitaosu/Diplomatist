@@ -14,8 +14,6 @@ class Diplomatist_Qt(QtGui.QMainWindow, Ui_MainWindow):
         QtGui.QMainWindow.__init__(self)
         Ui_MainWindow.__init__(self)
         self.setupUi(self)
-        #self.transc_changed.connect(self.change_transc)
-        #self.transl_changed.connect(self.change_transl)
 
     def change_transc(self, transc):
         self.text_transc.setText(transc)
