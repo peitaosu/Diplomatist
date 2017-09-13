@@ -61,7 +61,14 @@ Most of APIs required a credentials to use the API. You can register a account i
 
 ## UI
 
-Currently, Diplomatist has a very simple UI based on Tkinter, you can use it through `ui.py`, arguments are same as `diplomatist.py`:
+Currently, Diplomatist has a very simple UI based on Tkinter or PyQt4. You can use it through `ui_tk.py` or `ui_qt.py`, arguments are same as `diplomatist.py`:
 ```
-> python ui.py -s 15000 -a 1 -c cert.json -l en-US -t zh -o sub.srt
+> python ui_tk.py -s 15000 -a 1 -c cert.json -l en-US -t zh -o sub.srt
+
+# or 
+
+> python ui_qt.py -s 15000 -a 1 -c cert.json -l en-US -t zh -o sub.srt
 ```
+Before you use `ui_qt.py`, please make sure you have installed PyQt4 in your environment:
+1. Get PyQt4-***.whl from http://www.lfd.uci.edu/~gohlke/pythonlibs/#pyqt4
+2. pip install PyQt4-***.whl
