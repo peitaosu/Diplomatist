@@ -44,7 +44,7 @@ Most of APIs required a credentials to use the API. You can register a account i
     -h, --help            show this help message and exit
     -m, --mic             record sounds from microphone
     -f AUDIO_FILE, --file=AUDIO_FILE
-                            capture sounds and save as wave file temporary
+                            audio file which to be transcribed and translated
     -s TIME_SLICE, --slice=TIME_SLICE
                             time slice of each wave file
     -a API, --api=API     0 - CMU Sphinx, 1 - Google Cloud, 2 - Bing API, 3 -
