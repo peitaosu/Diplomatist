@@ -1,0 +1,3 @@
+[submodule "LoopbackCapture"]
+	path = LoopbackCapture
+	url = https://github.com/peitaosu/LoopbackCapture.git
