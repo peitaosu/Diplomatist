@@ -137,6 +137,8 @@ if __name__ == "__main__":
             os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = opt.credential
         else:
             cred = None
+    else:
+        cred = None
     if opt.output:
         os.environ["OUT_SRT"] = opt.output
     diplomatist = Diplomatist()
