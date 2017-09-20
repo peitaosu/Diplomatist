@@ -1,6 +1,10 @@
 from diplomatist import *
-import tkinter, thread
-
+import thread
+import platform
+if platform.system() == "Windows":
+    import tkinter
+if platform.system() == "Darwin":
+    import Tkinter as tkinter
 
 os.environ["LOOPBACK_CAPTURE"] = r"LoopbackCapture\win32\csharp\LoopbackCapture\LoopbackCapture\bin\Debug\LoopbackCapture.exe"
 
@@ -14,6 +18,8 @@ if opt.credential:
         os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = opt.credential
     else:
         cred = None
+else:
+    cred = None
 if opt.output:
     os.environ["OUT_SRT"] = opt.output
 
