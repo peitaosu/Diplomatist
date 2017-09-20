@@ -1,17 +1,25 @@
-import sys, thread
-from PyQt4 import QtCore, QtGui, uic
+import sys, thread, platform
+if platform.system() == "Darwin":
+    import site
+    site.addsitedir("/usr/local/lib/python2.7/site-packages")
+try:
+    from PyQt4 import QtCore, QtGui, uic
+    from PyQt4.QtCore import QMainWindow, QApplication
+except:
+    from PyQt5 import QtCore, QtGui, QtWidgets, uic
+    from PyQt5.QtWidgets import QMainWindow, QApplication
 from diplomatist import *
 
 qt_ui_file = "diplomatist.ui"
 
 Ui_MainWindow, QtBaseClass = uic.loadUiType(qt_ui_file)
 
-class Diplomatist_Qt(QtGui.QMainWindow, Ui_MainWindow):
+class Diplomatist_Qt(QMainWindow, Ui_MainWindow):
     transc_changed = QtCore.pyqtSignal(str)
     transl_changed = QtCore.pyqtSignal(str)
 
     def __init__(self):
-        QtGui.QMainWindow.__init__(self)
+        QMainWindow.__init__(self)
         Ui_MainWindow.__init__(self)
         self.setupUi(self)
 
@@ -40,7 +48,7 @@ if opt.output:
 
 diplomatist = Diplomatist()
 
-app = QtGui.QApplication(sys.argv)
+app = QApplication(sys.argv)
 diplomatist_ui = Diplomatist_Qt()
 diplomatist_ui.transc_changed.connect(diplomatist_ui.change_transc)
 diplomatist_ui.transl_changed.connect(diplomatist_ui.change_transl)
