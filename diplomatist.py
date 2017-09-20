@@ -144,6 +144,7 @@ if __name__ == "__main__":
     diplomatist = Diplomatist()
     if opt.audio_file:
         diplomatist.run_one_time(cred, opt)
+        sys.exit(0)
     records_folder = "records"
     if not os.path.isdir(records_folder):
         os.mkdir(records_folder)
