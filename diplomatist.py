@@ -3,6 +3,8 @@ import speech_recognition
 from optparse import OptionParser
 import google.cloud.translate
 import threading
+import platform
+from LoopbackCapture.mac.LoopbackCapture import record_sounds
 
 class Diplomatist():
     def __init__(self):
@@ -42,11 +44,14 @@ class Diplomatist():
             f.write(audio.get_wav_data())
     
     def capture_loopback(self, audio_file, milliseconds):
-        if "LOOPBACK_CAPTURE" not in os.environ:
-            print "Please set the %LOOPBACK_CAPTURE% before you start to capture."
-        Loopback_Capture_Path = os.environ["LOOPBACK_CAPTURE"]
-        process = subprocess.Popen("{} {} {}".format(Loopback_Capture_Path, audio_file, milliseconds), stdout=subprocess.PIPE)
-        exit_code = process.wait()
+        if platform.system() == "Darwin":
+            exit_code = record_sounds(audio_file, milliseconds)
+        if platform.system() == "Windows":
+            if "LOOPBACK_CAPTURE" not in os.environ:
+                print "Please set the %LOOPBACK_CAPTURE% before you start to capture."
+            Loopback_Capture_Path = os.environ["LOOPBACK_CAPTURE"]
+            process = subprocess.Popen("{} {} {}".format(Loopback_Capture_Path, audio_file, milliseconds), stdout=subprocess.PIPE)
+            exit_code = process.wait()
         return exit_code
     
     def translate(self, text, language):
