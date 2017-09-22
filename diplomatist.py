@@ -1,18 +1,25 @@
-import os, sys, time, subprocess
-import speech_recognition
-from optparse import OptionParser
-import google.cloud.translate
+import os
+import sys
+import time
+import subprocess
+import optparse
 import threading
 import platform
-from LoopbackCapture.mac.LoopbackCapture import record_sounds
+
+import speech_recognition
+
+if platform.system() == "Darwin":
+    from LoopbackCapture.mac.LoopbackCapture import record_sounds
+
 
 class Diplomatist():
     def __init__(self):
         if "GOOGLE_APPLICATION_CREDENTIALS" in os.environ:
+            import google.cloud.translate
             self.translate_client = google.cloud.translate.Client()
         if "OUT_SRT" in os.environ:
             self.out = open(os.environ["OUT_SRT"], "a")
-    
+
     def transcribe(self, api=0, audio_file=None, cred=None, language="en-US"):
         recognizer = speech_recognition.Recognizer()
         with speech_recognition.AudioFile(audio_file) as source:
@@ -32,8 +39,8 @@ class Diplomatist():
         except speech_recognition.RequestError as e:
             print "Request Error: {0}".format(e)
             return False
-    
-    def record(self, audio_file=None):
+
+    def record_mic(self, audio_file=None):
         recognizer = speech_recognition.Recognizer()
         with speech_recognition.Microphone() as source:
             print "Say something!"
@@ -42,22 +49,27 @@ class Diplomatist():
             audio_file = "record.wav"
         with open(audio_file, "wb") as f:
             f.write(audio.get_wav_data())
-    
+
     def capture_loopback(self, audio_file, milliseconds):
         if platform.system() == "Darwin":
             exit_code = record_sounds(audio_file, milliseconds)
         if platform.system() == "Windows":
             if "LOOPBACK_CAPTURE" not in os.environ:
                 print "Please set the %LOOPBACK_CAPTURE% before you start to capture."
+                sys.exit(-1)
+            if not os.path.isfile(os.environ["LOOPBACK_CAPTURE"]):
+                print "File Not Found. Please make sure the %LOOPBACK_CAPTURE% is correct."
+                sys.exit(-1)
             Loopback_Capture_Path = os.environ["LOOPBACK_CAPTURE"]
-            process = subprocess.Popen("{} {} {}".format(Loopback_Capture_Path, audio_file, milliseconds), stdout=subprocess.PIPE)
+            process = subprocess.Popen("{} {} {}".format(
+                Loopback_Capture_Path, audio_file, milliseconds), stdout=subprocess.PIPE)
             exit_code = process.wait()
         return exit_code
-    
+
     def translate(self, text, language):
         if "GOOGLE_APPLICATION_CREDENTIALS" in os.environ:
             return self.translate_client.translate(text, target_language=language)['translatedText']
-    
+
     def async_transcribe(self, api=0, audio_file=None, cred=None, language="en-US"):
         transc = self.transcribe(api, audio_file, cred, language)
         if transc == False:
@@ -77,17 +89,18 @@ class Diplomatist():
         if hasattr(self, "out"):
             self.out.write(transl + "\n")
         print transl
-    
+
     def keep_running(self, record_file, cred, options):
         init_time = 0
         while True:
             start_time = time.time()
             if options.use_mic:
-                self.record(record_file)
+                self.record_mic(record_file)
             else:
                 self.capture_loopback(record_file, options.time_slice)
             end_time = time.time()
-            time_str = "{} --> {}".format(time.strftime("%H:%M:%S", time.gmtime(init_time)), time.strftime("%H:%M:%S", time.gmtime(end_time - start_time + init_time)))
+            time_str = "{} --> {}".format(time.strftime("%H:%M:%S", time.gmtime(
+                init_time)), time.strftime("%H:%M:%S", time.gmtime(end_time - start_time + init_time)))
             if hasattr(self, "out"):
                 self.out.write(time_str + "\n")
             print time_str
@@ -96,36 +109,41 @@ class Diplomatist():
             saved_audio_file = os.path.join(records_folder, saved_file_name)
             os.rename(record_file, saved_audio_file)
             if options.translate:
-                thr = threading.Thread(target=self.async_transcribe_translate, args=([options.api, saved_audio_file, cred, options.language, options.translate]), kwargs={})
+                thr = threading.Thread(target=self.async_transcribe_translate, args=(
+                    [options.api, saved_audio_file, cred, options.language, options.translate]), kwargs={})
                 thr.start()
             else:
-                thr = threading.Thread(target=self.async_transcribe, args=([options.api, saved_audio_file, cred, options.language]), kwargs={})
+                thr = threading.Thread(target=self.async_transcribe, args=(
+                    [options.api, saved_audio_file, cred, options.language]), kwargs={})
                 thr.start()
 
     def run_one_time(self, cred, options):
         if options.translate:
-            self.async_transcribe_translate(options.api, options.audio_file, cred, options.language, options.translate)
+            self.async_transcribe_translate(
+                options.api, options.audio_file, cred, options.language, options.translate)
         else:
-            self.async_transcribe(options.api, options.audio_file, cred, options.language)
+            self.async_transcribe(
+                options.api, options.audio_file, cred, options.language)
+
 
 def get_options():
-    parser = OptionParser()
-    parser.add_option("-m", "--mic", dest="use_mic", action="store_true", default=False, 
-                help="record sounds from microphone")
-    parser.add_option("-f", "--file", dest="audio_file", default=None, 
-                help="audio file which to be transcribed and translated")
-    parser.add_option("-s", "--slice", dest="time_slice", default=10000, type="int", 
-                help="time slice of each wave file")
+    parser = optparse.OptionParser()
+    parser.add_option("-m", "--mic", dest="use_mic", action="store_true", default=False,
+                      help="record sounds from microphone")
+    parser.add_option("-f", "--file", dest="audio_file", default=None,
+                      help="audio file which to be transcribed and translated")
+    parser.add_option("-s", "--slice", dest="time_slice", default=10000, type="int",
+                      help="time slice of each wave file")
     parser.add_option("-a", "--api", dest="api", default=0, type="int",
-                help="0 - CMU Sphinx, 1 - Google Cloud, 2 - Bing API, 3 - Houndify API")
+                      help="0 - CMU Sphinx, 1 - Google Cloud, 2 - Bing API, 3 - Houndify API")
     parser.add_option("-c", "--cred", dest="credential", default=None,
-                help="credential file if is API required")
+                      help="credential file if is API required")
     parser.add_option("-l", "--lan", dest="language", default="en-US",
-                help="language which to be transcribed")
+                      help="language which to be transcribed")
     parser.add_option("-t", "--tran", dest="translate", default=None,
-                help="translate to another language")
+                      help="translate to another language")
     parser.add_option("-o", "--out", dest="output", default=None,
-                help="output the result as SRT file")
+                      help="output the result as SRT file")
     (options, args) = parser.parse_args()
     return options
 
