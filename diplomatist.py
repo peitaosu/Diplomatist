@@ -21,6 +21,17 @@ class Diplomatist():
             self.out = open(os.environ["OUT_SRT"], "a")
 
     def transcribe(self, api=0, audio_file=None, cred=None, language="en-US"):
+        """transcribe audio to text
+
+        args:
+            api (0 - CMU Sphinx, 1 - Google Cloud, 2 - Bing API, 3 - Houndify API)
+            audio_file (str)
+            cred (str)
+            language (str)
+
+        return:
+            result (str/False)
+        """
         recognizer = speech_recognition.Recognizer()
         with speech_recognition.AudioFile(audio_file) as source:
             audio = recognizer.record(source)
@@ -41,6 +52,11 @@ class Diplomatist():
             return False
 
     def record_mic(self, audio_file=None):
+        """record microphone and save to file
+
+        args:
+            audio_file (str)
+        """
         recognizer = speech_recognition.Recognizer()
         with speech_recognition.Microphone() as source:
             print "Say something!"
@@ -51,6 +67,15 @@ class Diplomatist():
             f.write(audio.get_wav_data())
 
     def capture_loopback(self, audio_file, milliseconds):
+        """capture system loopback with specific milliseconds and save to file
+
+        args:
+            audio_file (str)
+            milliseconds (int)
+
+        return:
+            exit_code (int)
+        """
         if platform.system() == "Darwin":
             exit_code = record_sounds(audio_file, milliseconds)
         if platform.system() == "Windows":
@@ -67,10 +92,27 @@ class Diplomatist():
         return exit_code
 
     def translate(self, text, language):
+        """translate text to another language
+
+        args:
+            text (str)
+            language (str)
+
+        return:
+            translated_text (str)
+        """
         if "GOOGLE_APPLICATION_CREDENTIALS" in os.environ:
             return self.translate_client.translate(text, target_language=language)['translatedText']
 
     def async_transcribe(self, api=0, audio_file=None, cred=None, language="en-US"):
+        """transcribe function for async running
+
+        args:
+            api (0 - CMU Sphinx, 1 - Google Cloud, 2 - Bing API, 3 - Houndify API)
+            audio_file (str)
+            cred (str)
+            language (str)
+        """
         transc = self.transcribe(api, audio_file, cred, language)
         if transc == False:
             transc = "Could Not Be Transcribed!"
@@ -79,6 +121,15 @@ class Diplomatist():
         print transc
 
     def async_transcribe_translate(self, api=0, audio_file=None, cred=None, transc_lan="en-US", transl_lan="zh"):
+        """transcribe with translate function for async running
+
+        args:
+            api (0 - CMU Sphinx, 1 - Google Cloud, 2 - Bing API, 3 - Houndify API)
+            audio_file (str)
+            cred (str)
+            transc_lan (str)
+            transl_lan (str)
+        """
         transc = self.transcribe(api, audio_file, cred, transc_lan)
         if transc == False:
             transc = "Could Not Be Transcribed!"
@@ -91,6 +142,13 @@ class Diplomatist():
         print transl
 
     def keep_running(self, record_file, cred, options):
+        """keep the process running until abort it
+
+        args:
+            record_file (str)
+            cred (str)
+            options (OptionParser)
+        """
         init_time = 0
         while True:
             start_time = time.time()
@@ -118,6 +176,12 @@ class Diplomatist():
                 thr.start()
 
     def run_one_time(self, cred, options):
+        """run the process one time
+
+        args:
+            cred (str)
+            options (OptionParser)
+        """
         if options.translate:
             self.async_transcribe_translate(
                 options.api, options.audio_file, cred, options.language, options.translate)
@@ -127,6 +191,8 @@ class Diplomatist():
 
 
 def get_options():
+    """get options
+    """
     parser = optparse.OptionParser()
     parser.add_option("-m", "--mic", dest="use_mic", action="store_true", default=False,
                       help="record sounds from microphone")
