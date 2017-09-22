@@ -150,30 +150,33 @@ class Diplomatist():
             options (OptionParser)
         """
         init_time = 0
-        while True:
-            start_time = time.time()
-            if options.use_mic:
-                self.record_mic(record_file)
-            else:
-                self.capture_loopback(record_file, options.time_slice)
-            end_time = time.time()
-            time_str = "{} --> {}".format(time.strftime("%H:%M:%S", time.gmtime(
-                init_time)), time.strftime("%H:%M:%S", time.gmtime(end_time - start_time + init_time)))
-            if hasattr(self, "out"):
-                self.out.write(time_str + "\n")
-            print time_str
-            init_time = end_time - start_time + init_time
-            saved_file_name = str(time.time()) + ".wav"
-            saved_audio_file = os.path.join(records_folder, saved_file_name)
-            os.rename(record_file, saved_audio_file)
-            if options.translate:
-                thr = threading.Thread(target=self.async_transcribe_translate, args=(
-                    [options.api, saved_audio_file, cred, options.language, options.translate]), kwargs={})
-                thr.start()
-            else:
-                thr = threading.Thread(target=self.async_transcribe, args=(
-                    [options.api, saved_audio_file, cred, options.language]), kwargs={})
-                thr.start()
+        try:
+            while True:
+                start_time = time.time()
+                if options.use_mic:
+                    self.record_mic(record_file)
+                else:
+                    self.capture_loopback(record_file, options.time_slice)
+                end_time = time.time()
+                time_str = "{} --> {}".format(time.strftime("%H:%M:%S", time.gmtime(
+                    init_time)), time.strftime("%H:%M:%S", time.gmtime(end_time - start_time + init_time)))
+                if hasattr(self, "out"):
+                    self.out.write(time_str + "\n")
+                print time_str
+                init_time = end_time - start_time + init_time
+                saved_file_name = str(time.time()) + ".wav"
+                saved_audio_file = os.path.join(records_folder, saved_file_name)
+                os.rename(record_file, saved_audio_file)
+                if options.translate:
+                    thr = threading.Thread(target=self.async_transcribe_translate, args=(
+                        [options.api, saved_audio_file, cred, options.language, options.translate]), kwargs={})
+                    thr.start()
+                else:
+                    thr = threading.Thread(target=self.async_transcribe, args=(
+                        [options.api, saved_audio_file, cred, options.language]), kwargs={})
+                    thr.start()
+        except KeyboardInterrupt:
+            print "Process was exited."
 
     def run_one_time(self, cred, options):
         """run the process one time
