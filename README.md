@@ -20,11 +20,11 @@ Diplomatist is an auto audio transcribe/translate tool.
 
 *LoopbackCapture*
 
-Compile LoopbackCapture under `/LoopbackCapture` and set the path of `LoopbackCapture.exe` as `Loopback_Capture_Path` in `diplomatist.py`.
+In Windows, compile LoopbackCapture under `/LoopbackCapture` and set the path of `LoopbackCapture.exe` as `Loopback_Capture_Path` in `diplomatist.py`.
 
 `/LoopbackCapture` folder included 3 solutions of win32, one console application written by C++, one console application written by C# (recommended) and another one is a .dll library written by C#.
 
-In Unix/Linux/MacOS, please find replacement tools to capture the loopback.
+In macOS, the `LoopbackCapture.py` support to capture sounds from output device but not support to capture Loopback from device directly. The workaround is to route what is playing on the computer digitally back to the input without using a cable. Suggest to use Soundflower.
 
 *Credentials*
 
