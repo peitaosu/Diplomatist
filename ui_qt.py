@@ -4,7 +4,7 @@ if platform.system() == "Darwin":
     site.addsitedir("/usr/local/lib/python2.7/site-packages")
 try:
     from PyQt4 import QtCore, QtGui, uic
-    from PyQt4.QtCore import QMainWindow, QApplication
+    from PyQt4.QtGui import QMainWindow, QApplication
 except:
     from PyQt5 import QtCore, QtGui, QtWidgets, uic
     from PyQt5.QtWidgets import QMainWindow, QApplication
