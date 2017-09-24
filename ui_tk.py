@@ -1,9 +1,9 @@
 from diplomatist import *
 import thread
 import platform
-if platform.system() == "Windows":
+try:
     import tkinter
-if platform.system() == "Darwin":
+except:
     import Tkinter as tkinter
 
 os.environ["LOOPBACK_CAPTURE"] = r"LoopbackCapture\win32\csharp\LoopbackCapture\LoopbackCapture\bin\Debug\LoopbackCapture.exe"
