@@ -10,6 +10,8 @@ import speech_recognition
 
 if platform.system() == "Darwin":
     from LoopbackCapture.mac.LoopbackCapture import record_sounds
+elif platform.system() == "Linux":
+    from LoopbackCapture.linux.LoopbackCapture import record_sounds
 
 
 class Diplomatist():
@@ -76,9 +78,9 @@ class Diplomatist():
         return:
             exit_code (int)
         """
-        if platform.system() == "Darwin":
+        if platform.system() == "Darwin" or platform.system() == "Linux":
             exit_code = record_sounds(audio_file, milliseconds)
-        if platform.system() == "Windows":
+        elif platform.system() == "Windows":
             if "LOOPBACK_CAPTURE" not in os.environ:
                 print "Please set the %LOOPBACK_CAPTURE% before you start to capture."
                 sys.exit(-1)
@@ -89,6 +91,8 @@ class Diplomatist():
             process = subprocess.Popen("{} {} {}".format(
                 Loopback_Capture_Path, audio_file, milliseconds), stdout=subprocess.PIPE)
             exit_code = process.wait()
+        else:
+            exit_code = -1
         return exit_code
 
     def translate(self, text, language):
