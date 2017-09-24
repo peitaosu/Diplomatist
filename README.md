@@ -28,7 +28,7 @@ In macOS, the `mac/LoopbackCapture.py` support to capture sounds from output dev
 
 In Linux, the `linux/LoopbackCapture.py` support to capture sounds from system but it require a tool `avconv` which is a part from "libav-tools" package to support to record audio use command line with specific format specific duration and from specific device.
 
-Detail: [LoopbackCapture README.md](LoopbackCapture/README.md)
+Detail: [LoopbackCapture README.md](https://github.com/peitaosu/LoopbackCapture/blob/master/README.md)
 
 *Credentials*
 
