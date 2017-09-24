@@ -69,6 +69,12 @@ Currently, Diplomatist has a very simple UI based on Tkinter or PyQt4. You can u
 
 > python ui_qt.py -s 15000 -a 1 -c cert.json -l en-US -t zh -o sub.srt
 ```
+
+Before you use `ui_tk.py`, please install python-tk package:
+
+In Linux:
+1. sudo apt-get install python-tk
+
 Before you use `ui_qt.py`, please make sure you have installed PyQt4/PyQt5 in your environment:
 
 In Windows:
@@ -77,3 +83,6 @@ In Windows:
 
 In macOS:
 1. brew install PyQt
+
+In Linux:
+1. sudo apt-get install python-qt4
