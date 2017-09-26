@@ -5,6 +5,7 @@ import subprocess
 import optparse
 import threading
 import platform
+import pydub
 
 import speech_recognition
 
@@ -34,6 +35,11 @@ class Diplomatist():
         return:
             result (str/False)
         """
+        audio_file_ext = audio_file.split(".")[-1]
+        if audio_file_ext is not "wav" and audio_file_ext is not "aif":
+            ori_audio_file = pydub.AudioSegment.from_file(audio_file, audio_file_ext)
+            audio_file = audio_file.replace(audio_file_ext, "wav")
+            exp_audio_file = ori_audio_file.export(audio_file, format="wav")
         recognizer = speech_recognition.Recognizer()
         with speech_recognition.AudioFile(audio_file) as source:
             audio = recognizer.record(source)
