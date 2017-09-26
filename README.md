@@ -12,6 +12,12 @@ Diplomatist is an auto audio transcribe/translate tool.
 * Loopback Capture (Windows)
 * Output as SRT
 
+## Support Format (Transcribe from File)
+
+Actually, Diplomatist only support to transcribe from `.wav` file and `.aif` file. For other formats, it will try to convert from other format to WAVE which was supported by **pydub**, and the **FFmpeg** is required in your environment.
+
+You can get **FFmpeg** from here: https://www.ffmpeg.org
+
 ## Requirements
 * python 2.x
 * ```pip install -r requirements.txt```
