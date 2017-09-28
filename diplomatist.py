@@ -13,6 +13,8 @@ if platform.system() == "Darwin":
     from LoopbackCapture.mac.LoopbackCapture import record_sounds
 elif platform.system() == "Linux":
     from LoopbackCapture.linux.LoopbackCapture import record_sounds
+elif platform.system() == "Windows":
+    from LoopbackCapture.win32.LoopbackCapture import record_sounds
 
 
 class Diplomatist():
@@ -84,21 +86,7 @@ class Diplomatist():
         return:
             exit_code (int)
         """
-        if platform.system() == "Darwin" or platform.system() == "Linux":
-            exit_code = record_sounds(audio_file, milliseconds)
-        elif platform.system() == "Windows":
-            if "LOOPBACK_CAPTURE" not in os.environ:
-                print "Please set the %LOOPBACK_CAPTURE% before you start to capture."
-                sys.exit(-1)
-            if not os.path.isfile(os.environ["LOOPBACK_CAPTURE"]):
-                print "File Not Found. Please make sure the %LOOPBACK_CAPTURE% is correct."
-                sys.exit(-1)
-            Loopback_Capture_Path = os.environ["LOOPBACK_CAPTURE"]
-            process = subprocess.Popen("{} {} {}".format(
-                Loopback_Capture_Path, audio_file, milliseconds), stdout=subprocess.PIPE)
-            exit_code = process.wait()
-        else:
-            exit_code = -1
+        exit_code = record_sounds(audio_file, milliseconds)
         return exit_code
 
     def translate(self, text, language):
