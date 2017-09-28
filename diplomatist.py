@@ -39,7 +39,8 @@ class Diplomatist():
         """
         audio_file_ext = audio_file.split(".")[-1]
         if audio_file_ext is not "wav" and audio_file_ext is not "aif":
-            ori_audio_file = pydub.AudioSegment.from_file(audio_file, audio_file_ext)
+            ori_audio_file = pydub.AudioSegment.from_file(
+                audio_file, audio_file_ext)
             audio_file = audio_file.replace(audio_file_ext, "wav")
             exp_audio_file = ori_audio_file.export(audio_file, format="wav")
         recognizer = speech_recognition.Recognizer()
@@ -139,15 +140,18 @@ class Diplomatist():
             self.out.write(transl + "\n")
         print transl
 
-    def keep_running(self, record_file, cred, options):
+    def keep_running(self, cred, options):
         """keep the process running until abort it
 
         args:
-            record_file (str)
             cred (str)
             options (OptionParser)
         """
         init_time = 0
+        record_file = "record.wav"
+        records_folder = "records"
+        if not os.path.isdir(records_folder):
+            os.mkdir(records_folder)
         try:
             while True:
                 start_time = time.time()
@@ -163,7 +167,8 @@ class Diplomatist():
                 print time_str
                 init_time = end_time - start_time + init_time
                 saved_file_name = str(time.time()) + ".wav"
-                saved_audio_file = os.path.join(records_folder, saved_file_name)
+                saved_audio_file = os.path.join(
+                    records_folder, saved_file_name)
                 os.rename(record_file, saved_audio_file)
                 if options.translate:
                     thr = threading.Thread(target=self.async_transcribe_translate, args=(
@@ -216,7 +221,8 @@ def get_options():
 
 
 if __name__ == "__main__":
-    os.environ["LOOPBACK_CAPTURE"] = r"LoopbackCapture\win32\csharp\LoopbackCapture\LoopbackCapture\bin\Debug\LoopbackCapture.exe"
+    if platform.system() == "Windows":
+        os.environ["LOOPBACK_CAPTURE"] = r"LoopbackCapture\win32\csharp\LoopbackCapture\LoopbackCapture\bin\Debug\LoopbackCapture.exe"
     opt = get_options()
     if opt.credential:
         if os.path.isfile(opt.credential):
@@ -235,8 +241,4 @@ if __name__ == "__main__":
     if opt.audio_file:
         diplomatist.run_one_time(cred, opt)
         sys.exit(0)
-    records_folder = "records"
-    if not os.path.isdir(records_folder):
-        os.mkdir(records_folder)
-    record_file = "record.wav"
-    diplomatist.keep_running(record_file, cred, opt)
+    diplomatist.keep_running(cred, opt)
