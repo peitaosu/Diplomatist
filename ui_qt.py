@@ -56,6 +56,10 @@ app = QApplication(sys.argv)
 diplomatist_ui = Diplomatist_Qt()
 diplomatist_ui.transc_changed.connect(diplomatist_ui.change_transc)
 diplomatist_ui.transl_changed.connect(diplomatist_ui.change_transl)
+
+if not opt.translate:
+    diplomatist_ui.text_transl.hide()
+
 diplomatist_ui.show()
 
 
