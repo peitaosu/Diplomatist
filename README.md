@@ -9,7 +9,7 @@ Diplomatist is an auto audio transcribe/translate tool.
 ## Key Features
 * Audio Transcription
 * Text Translation
-* Loopback Capture (Windows)
+* Loopback Capture
 * Output as SRT
 
 ## Support Format (Transcribe from File)
