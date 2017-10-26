@@ -216,6 +216,8 @@ def get_options():
                       help="translate to another language")
     parser.add_option("-o", "--out", dest="output", default=None,
                       help="output the result as SRT file")
+    parser.add_option("-p", "--proxy", dest="proxy", default=None,
+                      help="set http/https proxy")    
     (options, args) = parser.parse_args()
     return options
 
@@ -224,6 +226,9 @@ if __name__ == "__main__":
     if platform.system() == "Windows":
         os.environ["LOOPBACK_CAPTURE"] = r"LoopbackCapture\win32\csharp\LoopbackCapture\LoopbackCapture\bin\Debug\LoopbackCapture.exe"
     opt = get_options()
+    if opt.proxy:
+        os.environ["http_proxy"] = opt.proxy
+        os.environ["https_proxy"] = opt.proxy
     if opt.credential:
         if os.path.isfile(opt.credential):
             cred = open(opt.credential, "r").read()
