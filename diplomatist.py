@@ -224,7 +224,12 @@ def get_options():
 
 if __name__ == "__main__":
     if platform.system() == "Windows":
-        os.environ["LOOPBACK_CAPTURE"] = r"LoopbackCapture\win32\csharp\LoopbackCapture\LoopbackCapture\bin\Debug\LoopbackCapture.exe"
+        if "LOOPBACK_CAPTURE" not in os.environ:
+            # change this location to your LoopbackCapture output executable file
+            os.environ["LOOPBACK_CAPTURE"] = r"LoopbackCapture\win32\csharp\LoopbackCapture\LoopbackCapture\bin\Debug\LoopbackCapture.exe"
+        if not os.path.isfile(os.environ["LOOPBACK_CAPTURE"]):
+            print "LOOPBACK_CAPTURE error: File Not Found"
+            sys.exit(-1)
     opt = get_options()
     if opt.proxy:
         os.environ["http_proxy"] = opt.proxy
