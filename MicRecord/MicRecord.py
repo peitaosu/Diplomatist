@@ -2,7 +2,7 @@ import wave
 import pyaudio
 
 
-def record_sounds(output_file="record.wav", time=0):
+def record_mic(output_file="record.wav", time=0):
     _chunk = 1024
     _format = pyaudio.paInt16
     _channels = 2
