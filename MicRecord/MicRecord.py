@@ -1,32 +1,44 @@
-import wave, pyaudio
+import wave
+import pyaudio
+
 
 def record_sounds(output_file="record.wav", time=0):
-    CHUNK = 1024
-    FORMAT = pyaudio.paInt16
-    CHANNELS = 2
-    RATE = 44100
-    if time is not 0:
-        audio = pyaudio.PyAudio()
-        stream = audio.open(format=FORMAT,
-                            channels=CHANNELS,
-                            rate=RATE,
-                            input=True,
-                            frames_per_buffer=CHUNK)
-        frames = []
-        for i in range(0, int(RATE / CHUNK * time / 1000)):
-            data = stream.read(CHUNK)
-            frames.append(data)
-        stream.stop_stream()
-        stream.close()
-        audio.terminate()
+    _chunk = 1024
+    _format = pyaudio.paInt16
+    _channels = 2
+    _rate = 44100
 
-        out_file = wave.open(output_file, 'wb')
-        out_file.setnchannels(CHANNELS)
-        out_file.setsampwidth(audio.get_sample_size(FORMAT))
-        out_file.setframerate(RATE)
-        out_file.writeframes(b''.join(frames))
-        out_file.close()
-        exit_code = 0
+    audio = pyaudio.PyAudio()
+    stream = audio.open(format=_format,
+                        channels=_channels,
+                        rate=_rate,
+                        input=True,
+                        frames_per_buffer=_chunk)
+    frames = []
+    if time is not 0:
+        for i in range(0, int(_rate / _chunk * time / 1000)):
+            data = stream.read(_chunk)
+            frames.append(data)
     else:
-        exit_code = 0 
-    return exit_code
+        import os, sys, select
+        while True:
+            if sys.stdin in select.select([sys.stdin], [], [], 0)[0]:
+                try:
+                    line = input()
+                except:
+                    line = raw_input()
+                break
+            data = stream.read(_chunk)
+            frames.append(data)
+
+    stream.stop_stream()
+    stream.close()
+    audio.terminate()
+
+    out_file = wave.open(output_file, 'wb')
+    out_file.setnchannels(_channels)
+    out_file.setsampwidth(audio.get_sample_size(_format))
+    out_file.setframerate(_rate)
+    out_file.writeframes(b''.join(frames))
+    out_file.close()
+    return 0
