@@ -16,8 +16,8 @@ def record_mic(output_file="record.wav", time=0):
                         frames_per_buffer=_chunk)
     frames = []
     if time is not 0:
-        for i in range(0, int(_rate / _chunk * time / 1000)):
-            data = stream.read(_chunk)
+        for i in range(0, int(_rate * time * 0.001 / _chunk)):
+            data = stream.read(_chunk, exception_on_overflow=False)
             frames.append(data)
     else:
         import os, sys, select
@@ -28,7 +28,7 @@ def record_mic(output_file="record.wav", time=0):
                 except:
                     line = raw_input()
                 break
-            data = stream.read(_chunk)
+            data = stream.read(_chunk, exception_on_overflow=False)
             frames.append(data)
 
     stream.stop_stream()
