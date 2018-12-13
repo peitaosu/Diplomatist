@@ -16,6 +16,7 @@ elif platform.system() == "Linux":
 elif platform.system() == "Windows":
     from LoopbackCapture.win32.LoopbackCapture import record_sounds
 
+from MicRecord.MicRecord import record_mic
 
 class Diplomatist():
     def __init__(self):
@@ -61,34 +62,6 @@ class Diplomatist():
         except speech_recognition.RequestError as e:
             print "Request Error: {0}".format(e)
             return False
-
-    def record_mic(self, audio_file=None):
-        """record microphone and save to file
-
-        args:
-            audio_file (str)
-        """
-        recognizer = speech_recognition.Recognizer()
-        with speech_recognition.Microphone() as source:
-            print "Say something!"
-            audio = recognizer.listen(source)
-        if audio_file is None:
-            audio_file = "record.wav"
-        with open(audio_file, "wb") as f:
-            f.write(audio.get_wav_data())
-
-    def capture_loopback(self, audio_file, milliseconds):
-        """capture system loopback with specific milliseconds and save to file
-
-        args:
-            audio_file (str)
-            milliseconds (int)
-
-        return:
-            exit_code (int)
-        """
-        exit_code = record_sounds(audio_file, milliseconds)
-        return exit_code
 
     def translate(self, text, language):
         """translate text to another language
@@ -156,9 +129,9 @@ class Diplomatist():
             while True:
                 start_time = time.time()
                 if options.use_mic:
-                    self.record_mic(record_file)
+                    self.record_mic(record_file, options.time_slice)
                 else:
-                    self.capture_loopback(record_file, options.time_slice)
+                    self.record_sounds(record_file, options.time_slice)
                 end_time = time.time()
                 time_str = "{} --> {}".format(time.strftime("%H:%M:%S", time.gmtime(
                     init_time)), time.strftime("%H:%M:%S", time.gmtime(end_time - start_time + init_time)))
