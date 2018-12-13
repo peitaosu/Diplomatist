@@ -1,0 +1,32 @@
+{
+    "API": {
+        "0": {
+            "name": "CMU Sphinx"
+        },
+        "1": {
+            "name": "Google Cloud",
+            "cred": ""
+        },
+        "2": {
+            "name": "Microsoft Bing",
+            "cred": ""
+        },
+        "3": {
+            "name": "Houndify",
+            "cred": ""
+        },
+        "4": {
+            "name": "Baidu DeepSpeech",
+            "model": "",
+            "alphabet": "",
+            "lm": "",
+            "trie": ""
+        }
+    },
+    "STR": "OUT.TXT",
+    "RECORD": "records",
+    "PROXY": {
+        "http_proxy": "",
+        "https_proxy": ""
+    }
+}
