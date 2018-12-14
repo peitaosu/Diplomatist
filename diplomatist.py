@@ -206,6 +206,10 @@ def get_options():
                       help="language which to be transcribed")
     parser.add_option("-t", "--tran", dest="translate", default=None,
                       help="translate to another language")
+    parser.add_option("--qt", dest="ui_qt", action="store_true", default=False,
+                      help="runs UI with QT")
+    parser.add_option("--tk", dest="ui_tk", action="store_true", default=False,
+                      help="runs UI with Tk")
     (options, args) = parser.parse_args()
     return options
 

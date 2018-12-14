@@ -1,53 +1,70 @@
 import sys
 import thread
 import platform
-if platform.system() == "Darwin":
-    import site
-    site.addsitedir("/usr/local/lib/python2.7/site-packages")
-try:
-    from PyQt4 import QtCore, QtGui, uic
-    from PyQt4.QtGui import QMainWindow, QApplication
-except:
-    from PyQt5 import QtCore, QtGui, QtWidgets, uic
-    from PyQt5.QtWidgets import QMainWindow, QApplication
 from diplomatist import *
 
-qt_ui_file = "ui_qt.ui"
-
-Ui_MainWindow, QtBaseClass = uic.loadUiType(qt_ui_file)
-
-
-class Diplomatist_Qt(QMainWindow, Ui_MainWindow):
-    transc_changed = QtCore.pyqtSignal(str)
-    transl_changed = QtCore.pyqtSignal(str)
-
-    def __init__(self):
-        QMainWindow.__init__(self)
-        Ui_MainWindow.__init__(self)
-        self.setupUi(self)
-
-    def change_transc(self, transc):
-        self.text_transc.setText(transc)
-
-    def change_transl(self, transl):
-        self.text_transl.setText(transl)
-
-
-os.environ["LOOPBACK_CAPTURE"] = r"LoopbackCapture\win32\csharp\LoopbackCapture\LoopbackCapture\bin\Debug\LoopbackCapture.exe"
+if platform.system() == "Windows":
+    if "LOOPBACK_CAPTURE" not in os.environ:
+        # change this location to your LoopbackCapture output executable file
+        os.environ["LOOPBACK_CAPTURE"] = r"LoopbackCapture\win32\csharp\LoopbackCapture\LoopbackCapture\bin\Debug\LoopbackCapture.exe"
+    if not os.path.isfile(os.environ["LOOPBACK_CAPTURE"]):
+        print("LOOPBACK_CAPTURE error: File Not Found")
+        sys.exit(-1)
 
 options = get_options()
 diplomatist = Diplomatist(options.api)
 
-app = QApplication(sys.argv)
-diplomatist_ui = Diplomatist_Qt()
-diplomatist_ui.transc_changed.connect(diplomatist_ui.change_transc)
-diplomatist_ui.transl_changed.connect(diplomatist_ui.change_transl)
+if options.ui_qt:
+    if platform.system() == "Darwin":
+        import site
+        site.addsitedir("/usr/local/lib/python2.7/site-packages")
+    try:
+        from PyQt4 import QtCore, QtGui, uic
+        from PyQt4.QtGui import QMainWindow, QApplication
+    except:
+        from PyQt5 import QtCore, QtGui, QtWidgets, uic
+        from PyQt5.QtWidgets import QMainWindow, QApplication
 
-if not options.translate:
-    diplomatist_ui.text_transl.hide()
+    qt_ui_file = "ui_qt.ui"
+    Ui_MainWindow, QtBaseClass = uic.loadUiType(qt_ui_file)
+    class Diplomatist_Qt(QMainWindow, Ui_MainWindow):
+        transc_changed = QtCore.pyqtSignal(str)
+        transl_changed = QtCore.pyqtSignal(str)
 
-diplomatist_ui.show()
+        def __init__(self):
+            QMainWindow.__init__(self)
+            Ui_MainWindow.__init__(self)
+            self.setupUi(self)
 
+        def change_transc(self, transc):
+            self.text_transc.setText(transc)
+
+        def change_transl(self, transl):
+            self.text_transl.setText(transl)
+
+    app = QApplication(sys.argv)
+    diplomatist_ui = Diplomatist_Qt()
+    diplomatist_ui.transc_changed.connect(diplomatist_ui.change_transc)
+    diplomatist_ui.transl_changed.connect(diplomatist_ui.change_transl)
+    if not options.translate:
+        diplomatist_ui.text_transl.hide()
+    diplomatist_ui.show()
+
+if options.ui_tk:
+    try:
+        import tkinter
+    except:
+        import Tkinter as tkinter
+
+    diplomatist_ui = tkinter.Tk()
+    diplomatist_ui.title("Diplomatist")
+    diplomatist_ui.attributes("-alpha", 0.8)
+    transc_str = tkinter.StringVar()
+    transc_label = tkinter.Label(
+        diplomatist_ui, textvariable=transc_str).pack(side=tkinter.TOP)
+    transl_str = tkinter.StringVar()
+    transl_label = tkinter.Label(
+        diplomatist_ui, textvariable=transl_str).pack(side=tkinter.BOTTOM)
 
 def async_transcribe(language="en-US", audio_file=None):
     transc = diplomatist.transcribe(language, audio_file)
@@ -55,8 +72,10 @@ def async_transcribe(language="en-US", audio_file=None):
         transc = "Could Not Be Transcribed!"
     if hasattr(diplomatist, "str_out"):
         diplomatist.str_out.write(transc + "\n")
-    diplomatist_ui.transc_changed.emit(transc)
-
+    if options.ui_qt:
+        diplomatist_ui.transc_changed.emit(transc)
+    if options.ui_tk:
+        transc_str.set(transc)
 
 def async_transcribe_translate(transc_lan="en-US", audio_file=None, transl_lan="zh"):
     transc = diplomatist.transcribe(transc_lan, audio_file)
@@ -64,12 +83,17 @@ def async_transcribe_translate(transc_lan="en-US", audio_file=None, transl_lan="
         transc = "Could Not Be Transcribed!"
     if hasattr(diplomatist, "str_out"):
         diplomatist.str_out.write(transc + "\n")
-    diplomatist_ui.transc_changed.emit(transc)
+    if options.ui_qt:
+        diplomatist_ui.transc_changed.emit(transc)
+    if options.ui_tk:
+        transc_str.set(transc)
     transl = diplomatist.translate(transc, transl_lan)
     if hasattr(diplomatist, "str_out"):
         diplomatist.str_out.write(transl + "\n")
-    diplomatist_ui.transl_changed.emit(transl)
-
+    if options.ui_qt:
+        diplomatist_ui.transl_changed.emit(transl)
+    if options.ui_tk:
+        transl_str.set(transl)
 
 def keep_running(language="en-US", time_slice=10000, use_mic=False, translate=None):
     init_time = 0
@@ -119,4 +143,8 @@ def dip_thread():
 
 
 thread.start_new_thread(dip_thread, ())
-sys.exit(app.exec_())
+if options.ui_qt:
+    sys.exit(app.exec_())
+if options.ui_tk:
+    diplomatist_ui.mainloop()
+
