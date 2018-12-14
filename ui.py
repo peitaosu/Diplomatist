@@ -3,14 +3,6 @@ import thread
 import platform
 from diplomatist import *
 
-if platform.system() == "Windows":
-    if "LOOPBACK_CAPTURE" not in os.environ:
-        # change this location to your LoopbackCapture output executable file
-        os.environ["LOOPBACK_CAPTURE"] = r"LoopbackCapture\win32\csharp\LoopbackCapture\LoopbackCapture\bin\Debug\LoopbackCapture.exe"
-    if not os.path.isfile(os.environ["LOOPBACK_CAPTURE"]):
-        print("LOOPBACK_CAPTURE error: File Not Found")
-        sys.exit(-1)
-
 options = get_options()
 diplomatist = Diplomatist(options.api)
 

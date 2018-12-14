@@ -23,6 +23,7 @@
             "trie": ""
         }
     },
+    "LOOPBACK_CAPTURE": "LoopbackCapture\\win32\\csharp\\LoopbackCapture\\LoopbackCapture\\bin\\Debug\\LoopbackCapture.exe",
     "STR": "OUT.TXT",
     "RECORD": "records",
     "PROXY": {

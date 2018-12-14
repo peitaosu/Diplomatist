@@ -26,6 +26,11 @@ class Diplomatist():
         if self.config["API"]["1"]["cred"] != "":
             import google.cloud.translate
             self.translate_client = google.cloud.translate.Client()
+        os.environ["LOOPBACK_CAPTURE"] = self.config["LOOPBACK_CAPTURE"]
+        if platform.system() == "Windows":
+            if not os.path.isfile(os.environ["LOOPBACK_CAPTURE"]):
+                print("LOOPBACK_CAPTURE error: File Not Found")
+                sys.exit(-1)
         if self.config["STR"] != "":
             self.str_out = open(self.config["STR"], "a")
         for proxy in self.config["PROXY"]:
@@ -215,13 +220,6 @@ def get_options():
 
 
 if __name__ == "__main__":
-    if platform.system() == "Windows":
-        if "LOOPBACK_CAPTURE" not in os.environ:
-            # change this location to your LoopbackCapture output executable file
-            os.environ["LOOPBACK_CAPTURE"] = r"LoopbackCapture\win32\csharp\LoopbackCapture\LoopbackCapture\bin\Debug\LoopbackCapture.exe"
-        if not os.path.isfile(os.environ["LOOPBACK_CAPTURE"]):
-            print("LOOPBACK_CAPTURE error: File Not Found")
-            sys.exit(-1)
     options = get_options()
     diplomatist = Diplomatist(options.api)
     if options.audio_file:
