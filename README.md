@@ -24,7 +24,16 @@ You can get **FFmpeg** from here: https://www.ffmpeg.org
 
 ## Before Use
 
-*LoopbackCapture*
+***config.json***
+
+Most of required configurations will be loaded from `config.json`, there are some default values already, if you want to change these configs please update `config.json`.
+* API: name, cred, model, alphabet, etc.
+* LOOPBACK_CAPTURE: location of LoopbackCapture
+* SRT: save output string to srt file
+* RECORD: location to save temp record files
+* PROXY: http/https proxy servers
+
+***LoopbackCapture***
 
 In Windows, compile LoopbackCapture under `/LoopbackCapture` and set the path of `LoopbackCapture.exe` as `Loopback_Capture_Path` in `diplomatist.py`.
 
@@ -36,7 +45,7 @@ In Linux, the `linux/LoopbackCapture.py` support to capture sounds from system b
 
 Detail: [LoopbackCapture README.md](https://github.com/peitaosu/LoopbackCapture/blob/master/README.md)
 
-*Credentials*
+***Credentials***
 
 Most of APIs required a credentials to use the API. You can register a account in the website and get the credentials file or keys. Most of them have some free quota each month.
 
@@ -46,7 +55,7 @@ Most of APIs required a credentials to use the API. You can register a account i
 
 ## Usage
    ```
-   > python diplomatist.py -s 15000 -a 1 -c cert.json -l en-US -t zh -o sub.srt
+   > python diplomatist.py -s 15000 -a 1 -l en-US -t zh -o sub.srt
 
     Usage: diplomatist.py [options]
 
@@ -59,40 +68,38 @@ Most of APIs required a credentials to use the API. You can register a account i
                             time slice of each wave file
     -a API, --api=API     0 - CMU Sphinx, 1 - Google Cloud, 2 - Bing API, 3 -
                             Houndify API
-    -c CREDENTIAL, --cred=CREDENTIAL
-                            credential file if is API required
     -l LANGUAGE, --lan=LANGUAGE
                             language which to be transcribed
     -t TRANSLATE, --tran=TRANSLATE
                             translate to another language
-    -o OUTPUT, --out=OUTPUT
-                            output the result as SRT file
+    --qt                  runs UI with QT
+    --tk                  runs UI with Tk   
    ```
 
 ## UI
 
-Currently, Diplomatist has a very simple UI based on Tkinter or PyQt4. You can use it through `ui_tk.py` or `ui_qt.py`, arguments are same as `diplomatist.py`:
+Currently, Diplomatist has a very simple UI based on Tkinter or PyQt4. You can use it through `ui.py` with arguments `--tk` or `--qt`, other arguments are same as `diplomatist.py`:
 ```
-> python ui_tk.py -s 15000 -a 1 -c cert.json -l en-US -t zh -o sub.srt
+> python ui.py -s 15000 -a 1 -l en-US -t zh -o sub.srt --tk
 
 # or 
 
-> python ui_qt.py -s 15000 -a 1 -c cert.json -l en-US -t zh -o sub.srt
+> python ui.py -s 15000 -a 1 -l en-US -t zh -o sub.srt --qt
 ```
 
-Before you use `ui_tk.py`, please install python-tk package:
+Before you use `ui.py` with `--tk`, please install python-tk package:
 
 In Linux:
-1. sudo apt-get install python-tk
+1. `> sudo apt-get install python-tk`
 
-Before you use `ui_qt.py`, please make sure you have installed PyQt4/PyQt5 in your environment:
+Before you use `ui.py` with `--qt`, please make sure you have installed PyQt4/PyQt5 in your environment:
 
 In Windows:
 1. Get PyQt4/5-***.whl from http://www.lfd.uci.edu/~gohlke/pythonlibs/#pyqt4
-2. pip install PyQt4/5-***.whl
+2. `> pip install PyQt4/5-***.whl`
 
 In macOS:
-1. brew install PyQt
+1. `> brew install PyQt`
 
 In Linux:
-1. sudo apt-get install python-qt4
+1. `> sudo apt-get install python-qt4`
