@@ -50,12 +50,12 @@ class Diplomatist():
             else:
                 self.cred = cred_config
 
-    def transcribe(self, audio_file=None, language="en-US"):
+    def transcribe(self, language="en-US", audio_file=None):
         """transcribe audio to text
 
         args:
-            audio_file (str)
             language (str)
+            audio_file (str)
 
         return:
             result (str/False)
@@ -98,29 +98,29 @@ class Diplomatist():
         if hasattr(self, "translate_client"):
             return self.translate_client.translate(text, target_language=language)['translatedText']
 
-    def async_transcribe(self, audio_file=None, language="en-US"):
+    def async_transcribe(self, language="en-US", audio_file=None):
         """transcribe function for async running
 
         args:
-            audio_file (str)
             language (str)
+            audio_file (str)
         """
-        transc = self.transcribe(audio_file, language)
+        transc = self.transcribe(language, audio_file)
         if transc == False:
             transc = "Could Not Be Transcribed!"
         if hasattr(self, "str_out"):
             self.str_out.write(transc + "\n")
         print(transc)
 
-    def async_transcribe_translate(self, audio_file=None, transc_lan="en-US", transl_lan="zh"):
+    def async_transcribe_translate(self, transc_lan="en-US", audio_file=None, transl_lan="zh"):
         """transcribe with translate function for async running
 
         args:
-            audio_file (str)
             transc_lan (str)
+            audio_file (str)
             transl_lan (str)
         """
-        transc = self.transcribe(audio_file, transc_lan)
+        transc = self.transcribe(transc_lan, audio_file)
         if transc == False:
             transc = "Could Not Be Transcribed!"
         if hasattr(self, "str_out"):
@@ -131,11 +131,14 @@ class Diplomatist():
             self.str_out.write(transl + "\n")
         print(transl)
 
-    def keep_running(self, options):
+    def keep_running(self, language="en-US", time_slice=10000, use_mic=False, translate=None):
         """keep the process running until abort it
 
         args:
-            options (OptionParser)
+            language (str)
+            time_slice (int)
+            use_mic (bool)
+            translate (str)
         """
         init_time = 0
         record_file = "record.wav"
@@ -145,10 +148,10 @@ class Diplomatist():
         try:
             while True:
                 start_time = time.time()
-                if options.use_mic:
-                    record_mic(record_file, options.time_slice)
+                if use_mic:
+                    record_mic(record_file, time_slice)
                 else:
-                    record_sounds(record_file, options.time_slice)
+                    record_sounds(record_file, time_slice)
                 end_time = time.time()
                 time_str = "{} --> {}".format(time.strftime("%H:%M:%S", time.gmtime(
                     init_time)), time.strftime("%H:%M:%S", time.gmtime(end_time - start_time + init_time)))
@@ -160,29 +163,31 @@ class Diplomatist():
                 saved_audio_file = os.path.join(
                     records_folder, saved_file_name)
                 os.rename(record_file, saved_audio_file)
-                if options.translate:
+                if translate:
                     thr = threading.Thread(target=self.async_transcribe_translate, args=(
-                        [saved_audio_file, options.language, options.translate]), kwargs={})
+                        [language, saved_audio_file, translate]), kwargs={})
                     thr.start()
                 else:
                     thr = threading.Thread(target=self.async_transcribe, args=(
-                        [saved_audio_file, options.language]), kwargs={})
+                        [language, saved_audio_file]), kwargs={})
                     thr.start()
         except KeyboardInterrupt:
             print("Process was exited.")
 
-    def run_one_time(self, options):
+    def run_one_time(self, language="en-US", audio_file=None, translate=None):
         """run the process one time
 
         args:
-            options (OptionParser)
+            language (str)
+            audio_file (str)
+            translate (str)
         """
-        if options.translate:
+        if translate:
             self.async_transcribe_translate(
-                options.audio_file, options.language, options.translate)
+                language, audio_file, translate)
         else:
             self.async_transcribe(
-                options.audio_file, options.language)
+                language, audio_file)
 
 
 def get_options():
@@ -213,9 +218,9 @@ if __name__ == "__main__":
         if not os.path.isfile(os.environ["LOOPBACK_CAPTURE"]):
             print("LOOPBACK_CAPTURE error: File Not Found")
             sys.exit(-1)
-    opt = get_options()
-    diplomatist = Diplomatist()
-    if opt.audio_file:
-        diplomatist.run_one_time(opt)
+    options = get_options()
+    diplomatist = Diplomatist(options.api)
+    if options.audio_file:
+        diplomatist.run_one_time(options.language, options.audio_file, options.translate)
         sys.exit(0)
-    diplomatist.keep_running(opt)
+    diplomatist.keep_running(options.language, options.time_slice, options.use_mic, options.translate)

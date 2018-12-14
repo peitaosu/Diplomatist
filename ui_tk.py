@@ -8,22 +8,8 @@ except:
 
 os.environ["LOOPBACK_CAPTURE"] = r"LoopbackCapture\win32\csharp\LoopbackCapture\LoopbackCapture\bin\Debug\LoopbackCapture.exe"
 
-opt = get_options()
-if opt.credential:
-    if os.path.isfile(opt.credential):
-        cred = open(opt.credential, "r").read()
-    else:
-        cred = opt.credential
-    if opt.translate:
-        os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = opt.credential
-    else:
-        cred = None
-else:
-    cred = None
-if opt.output:
-    os.environ["OUT_SRT"] = opt.output
-
-diplomatist = Diplomatist()
+options = get_options()
+diplomatist = Diplomatist(options.api)
 
 diplomatist_ui = tkinter.Tk()
 diplomatist_ui.title("Diplomatist")
@@ -36,29 +22,29 @@ transl_label = tkinter.Label(
     diplomatist_ui, textvariable=transl_str).pack(side=tkinter.BOTTOM)
 
 
-def async_transcribe(api=0, audio_file=None, cred=None, language="en-US"):
-    transc = diplomatist.transcribe(api, audio_file, cred, language)
+def async_transcribe(language="en-US", audio_file=None):
+    transc = diplomatist.transcribe(language, audio_file)
     if transc == False:
         transc = "Could Not Be Transcribed!"
-    if hasattr(diplomatist, "out"):
-        diplomatist.out.write(transc + "\n")
+    if hasattr(diplomatist, "str_out"):
+        diplomatist.str_out.write(transc + "\n")
     transc_str.set(transc)
 
 
-def async_transcribe_translate(api=0, audio_file=None, cred=None, transc_lan="en-US", transl_lan="zh"):
-    transc = diplomatist.transcribe(api, audio_file, cred, transc_lan)
+def async_transcribe_translate(transc_lan="en-US", audio_file=None, transl_lan="zh"):
+    transc = diplomatist.transcribe(transc_lan, audio_file)
     if transc == False:
         transc = "Could Not Be Transcribed!"
-    if hasattr(diplomatist, "out"):
-        diplomatist.out.write(transc + "\n")
+    if hasattr(diplomatist, "str_out"):
+        diplomatist.str_out.write(transc + "\n")
     transc_str.set(transc)
     transl = diplomatist.translate(transc, transl_lan)
-    if hasattr(diplomatist, "out"):
-        diplomatist.out.write(transl + "\n")
+    if hasattr(diplomatist, "str_out"):
+        diplomatist.str_out.write(transl + "\n")
     transl_str.set(transl)
 
 
-def keep_running():
+def keep_running(language="en-US", time_slice=10000, use_mic=False, translate=None):
     init_time = 0
     records_folder = "records"
     if not os.path.isdir(records_folder):
@@ -66,10 +52,10 @@ def keep_running():
     record_file = "record.wav"
     while True:
         start_time = time.time()
-        if opt.use_mic:
-            diplomatist.record_mic(record_file)
+        if use_mic:
+            record_mic(record_file, time_slice)
         else:
-            diplomatist.capture_loopback(record_file, opt.time_slice)
+            capture_loopback(record_file, time_slice)
         end_time = time.time()
         time_str = "{} --> {}".format(time.strftime("%H:%M:%S", time.gmtime(
             init_time)), time.strftime("%H:%M:%S", time.gmtime(end_time - start_time + init_time)))
@@ -80,29 +66,29 @@ def keep_running():
         saved_file_name = str(time.time()) + ".wav"
         saved_audio_file = os.path.join(records_folder, saved_file_name)
         os.rename(record_file, saved_audio_file)
-        if opt.translate:
+        if translate:
             thr = threading.Thread(target=async_transcribe_translate, args=(
-                [opt.api, saved_audio_file, cred, opt.language, opt.translate]), kwargs={})
+                [language, saved_audio_file, translate]), kwargs={})
             thr.start()
         else:
             thr = threading.Thread(target=async_transcribe, args=(
-                [opt.api, saved_audio_file, cred, opt.language]), kwargs={})
+                [language, saved_audio_file]), kwargs={})
             thr.start()
 
 
-def run_one_time():
-    if opt.translate:
+def run_one_time(language="en-US", audio_file=None, translate=None):
+    if translate:
         async_transcribe_translate(
-            opt.api, opt.audio_file, cred, opt.language, opt.translate)
+            language, audio_file, translate)
     else:
-        async_transcribe(opt.api, opt.audio_file, cred, opt.language)
+        async_transcribe(language, audio_file)
 
 
 def dip_thread():
-    if opt.audio_file:
-        run_one_time()
+    if options.audio_file:
+        run_one_time(options.language, options.audio_file, options.translate)
     else:
-        keep_running()
+        keep_running(options.language, options.time_slice, options.use_mic, options.translate)
 
 
 thread.start_new_thread(dip_thread, ())
