@@ -31,8 +31,8 @@ class Diplomatist():
             if not os.path.isfile(os.environ["LOOPBACK_CAPTURE"]):
                 print("LOOPBACK_CAPTURE error: File Not Found")
                 sys.exit(-1)
-        if self.config["STR"] != "":
-            self.str_out = open(self.config["STR"], "a")
+        if self.config["SRT"] != "":
+            self.srt_out = open(self.config["SRT"], "a")
         for proxy in self.config["PROXY"]:
             os.environ[proxy] = self.config["PROXY"][proxy]
 
@@ -113,8 +113,8 @@ class Diplomatist():
         transc = self.transcribe(language, audio_file)
         if transc == False:
             transc = "Could Not Be Transcribed!"
-        if hasattr(self, "str_out"):
-            self.str_out.write(transc + "\n")
+        if hasattr(self, "srt_out"):
+            self.srt_out.write(transc + "\n")
         print(transc)
 
     def async_transcribe_translate(self, transc_lan="en-US", audio_file=None, transl_lan="zh"):
@@ -128,12 +128,12 @@ class Diplomatist():
         transc = self.transcribe(transc_lan, audio_file)
         if transc == False:
             transc = "Could Not Be Transcribed!"
-        if hasattr(self, "str_out"):
-            self.str_out.write(transc + "\n")
+        if hasattr(self, "srt_out"):
+            self.srt_out.write(transc + "\n")
         print(transc)
         transl = self.translate(transc, transl_lan)
-        if hasattr(self, "str_out"):
-            self.str_out.write(transl + "\n")
+        if hasattr(self, "srt_out"):
+            self.srt_out.write(transl + "\n")
         print(transl)
 
     def keep_running(self, language="en-US", time_slice=10000, use_mic=False, translate=None):
@@ -160,8 +160,8 @@ class Diplomatist():
                 end_time = time.time()
                 time_str = "{} --> {}".format(time.strftime("%H:%M:%S", time.gmtime(
                     init_time)), time.strftime("%H:%M:%S", time.gmtime(end_time - start_time + init_time)))
-                if hasattr(self, "str_out"):
-                    self.str_out.write(time_str + "\n")
+                if hasattr(self, "srt_out"):
+                    self.srt_out.write(time_str + "\n")
                 print(time_str)
                 init_time = end_time - start_time + init_time
                 saved_file_name = str(time.time()) + ".wav"

@@ -62,8 +62,8 @@ def async_transcribe(language="en-US", audio_file=None):
     transc = diplomatist.transcribe(language, audio_file)
     if transc == False:
         transc = "Could Not Be Transcribed!"
-    if hasattr(diplomatist, "str_out"):
-        diplomatist.str_out.write(transc + "\n")
+    if hasattr(diplomatist, "srt_out"):
+        diplomatist.srt_out.write(transc + "\n")
     if options.ui_qt:
         diplomatist_ui.transc_changed.emit(transc)
     if options.ui_tk:
@@ -73,15 +73,15 @@ def async_transcribe_translate(transc_lan="en-US", audio_file=None, transl_lan="
     transc = diplomatist.transcribe(transc_lan, audio_file)
     if transc == False:
         transc = "Could Not Be Transcribed!"
-    if hasattr(diplomatist, "str_out"):
-        diplomatist.str_out.write(transc + "\n")
+    if hasattr(diplomatist, "srt_out"):
+        diplomatist.srt_out.write(transc + "\n")
     if options.ui_qt:
         diplomatist_ui.transc_changed.emit(transc)
     if options.ui_tk:
         transc_str.set(transc)
     transl = diplomatist.translate(transc, transl_lan)
-    if hasattr(diplomatist, "str_out"):
-        diplomatist.str_out.write(transl + "\n")
+    if hasattr(diplomatist, "srt_out"):
+        diplomatist.srt_out.write(transl + "\n")
     if options.ui_qt:
         diplomatist_ui.transl_changed.emit(transl)
     if options.ui_tk:
@@ -102,8 +102,8 @@ def keep_running(language="en-US", time_slice=10000, use_mic=False, translate=No
         end_time = time.time()
         time_str = "{} --> {}".format(time.strftime("%H:%M:%S", time.gmtime(
             init_time)), time.strftime("%H:%M:%S", time.gmtime(end_time - start_time + init_time)))
-        if hasattr(diplomatist, "out"):
-            diplomatist.out.write(time_str + "\n")
+        if hasattr(diplomatist, "srt_out"):
+            diplomatist.srt_out.write(time_str + "\n")
         print time_str
         init_time = end_time - start_time + init_time
         saved_file_name = str(time.time()) + ".wav"
