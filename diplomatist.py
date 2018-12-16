@@ -54,6 +54,9 @@ class Diplomatist():
                     self.cred = cred_config.read()
             else:
                 self.cred = cred_config
+        if self.api == 4:
+            from deepspeech import DeepSpeechRecognizer
+            self.deepspeech_recognizer = DeepSpeechRecognizer(self.config["API"]["4"]["model"], self.config["API"]["4"]["alphabet"], self.config["API"]["4"]["lm"], self.config["API"]["4"]["trie"])
 
     def transcribe(self, language="en-US", audio_file=None):
         """transcribe audio to text
@@ -83,6 +86,8 @@ class Diplomatist():
                 return recognizer.recognize_bing(audio, self.cred, language)
             elif self.api == 3:
                 return recognizer.recognize_houndify(audio, self.cred.split(",")[0], self.cred.split(",")[1])
+            elif self.api == 4:
+                return self.deepspeech_recognizer.recognize(audio_file)
         except speech_recognition.UnknownValueError:
             print("Could Not Understand")
             return False
@@ -206,7 +211,7 @@ def get_options():
     parser.add_option("-s", "--slice", dest="time_slice", default=10000, type="int",
                       help="time slice of each wave file")
     parser.add_option("-a", "--api", dest="api", default=0, type="int",
-                      help="0 - CMU Sphinx, 1 - Google Cloud, 2 - Bing API, 3 - Houndify API")
+                      help="0 - CMU Sphinx, 1 - Google Cloud, 2 - Bing API, 3 - Houndify API, 4 - Baidu DeepSpeech")
     parser.add_option("-l", "--lan", dest="language", default="en-US",
                       help="language which to be transcribed")
     parser.add_option("-t", "--tran", dest="translate", default=None,
