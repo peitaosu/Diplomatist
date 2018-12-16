@@ -17,9 +17,9 @@ class DeepSpeechRecognizer():
             result (str/False)
         """
         output = subprocess.check_output("deepspeech --model {} --alphabet {} --lm {} --trie {} --audio {}".format(self.model, self.alphabet, self.lm, self.trie, audio_file), shell=True, stderr=subprocess.STDOUT)
-        for index, line in enumerate(output.split("\n")):
-            if line.startswith("Inference took "):
-                return output.split("\n")[index + 1]
+        for line in output.split("\n"):
+            if line[0].islower():
+                return line
         return None
 
 if __name__=="__main__":
