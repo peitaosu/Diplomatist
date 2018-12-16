@@ -17,7 +17,7 @@ elif platform.system() == "Linux":
 elif platform.system() == "Windows":
     from LoopbackCapture.win32.LoopbackCapture import record_sounds
 
-from MicRecord.MicRecord import record_mic
+from mic import record_mic
 
 class Diplomatist():
     def __init__(self, transcribe_api=0):
