@@ -55,6 +55,9 @@ class Diplomatist():
             else:
                 self.cred = cred_config
         if self.api == 4:
+            if platform.system() == "Windows":
+                print("DeepSpeech not support Windows for now, please use other APIs.")
+                sys.exit(-1)
             from deepspeech import DeepSpeechRecognizer
             self.deepspeech_recognizer = DeepSpeechRecognizer(self.config["API"]["4"]["model"], self.config["API"]["4"]["alphabet"], self.config["API"]["4"]["lm"], self.config["API"]["4"]["trie"])
 
