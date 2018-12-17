@@ -26,7 +26,7 @@ Actually, Diplomatist only support to transcribe from `.wav` file and `.aif` fil
 You can get **FFmpeg** from here: https://www.ffmpeg.org
 
 ## Requirements
-* python 2.x
+* python 2.x/3.x
 * ```pip install -r requirements.txt```
 * ```pip install -r requirements[.osx|.linux].txt``` (for macOS/Linux)
 

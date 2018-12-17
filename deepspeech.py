@@ -1,4 +1,4 @@
-import subprocess
+import sys, subprocess
 
 class DeepSpeechRecognizer():
     def __init__(self, model=None, alphabet=None, lm=None, trie=None):
@@ -6,6 +6,7 @@ class DeepSpeechRecognizer():
         self.alphabet = alphabet
         self.lm = lm
         self.trie = trie
+        self.py3 = sys.version_info[0] > 2
 
     def recognize(self, audio_file):
         """recognize audio file
@@ -16,7 +17,11 @@ class DeepSpeechRecognizer():
         return:
             result (str/False)
         """
-        output = subprocess.check_output("deepspeech --model {} --alphabet {} --lm {} --trie {} --audio {}".format(self.model, self.alphabet, self.lm, self.trie, audio_file), shell=True, stderr=subprocess.STDOUT)
+        deepspeech_command = "deepspeech --model {} --alphabet {} --lm {} --trie {} --audio {}".format(self.model, self.alphabet, self.lm, self.trie, audio_file)
+        if self.py3:
+            output = subprocess.check_output(deepspeech_command, encoding='UTF-8', shell=True, stderr=subprocess.STDOUT)
+        else:
+            output = subprocess.check_output(deepspeech_command, shell=True, stderr=subprocess.STDOUT)
         for line in output.split("\n"):
             if line[0].islower():
                 return line
