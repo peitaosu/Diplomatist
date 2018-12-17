@@ -4,12 +4,19 @@
 
 ## What is Diplomatist ?
 
-Diplomatist is an auto audio transcribe/translate tool.
+Diplomatist is an auto audio transcribe(audio2text) and translate(lang2lang) tool.
+
+## APIs
+* 0 - CMU Sphinx
+* 1 - Google Cloud
+* 2 - Bing API
+* 3 - Houndify API
+* 4 - Baidu DeepSpeech (macOS/Linux Only)
 
 ## Key Features
 * Audio Transcription
 * Text Translation
-* Loopback Capture
+* Loopback Capture and Microphone Record
 * Output as SRT
 
 ## Support Format (Transcribe from File)
@@ -21,6 +28,7 @@ You can get **FFmpeg** from here: https://www.ffmpeg.org
 ## Requirements
 * python 2.x
 * ```pip install -r requirements.txt```
+* ```pip install -r requirements[.osx|.linux].txt``` (for macOS/Linux)
 
 ## Before Use
 
@@ -47,7 +55,7 @@ Detail: [LoopbackCapture README.md](https://github.com/peitaosu/LoopbackCapture/
 
 ***Credentials***
 
-Most of APIs required a credentials to use the API. You can register a account in the website and get the credentials file or keys. Most of them have some free quota each month.
+Most of APIs required a credential to use the API. You can register a account in the website and get the credential file or key. Most of them have some free quota each month.
 
 * Google Cloud API: https://cloud.google.com/speech/
 * Bing API: https://azure.microsoft.com/en-ca/pricing/details/cognitive-services/speech-api/
@@ -57,23 +65,23 @@ Most of APIs required a credentials to use the API. You can register a account i
    ```
    > python diplomatist.py -s 15000 -a 1 -l en-US -t zh -o sub.srt
 
-    Usage: diplomatist.py [options]
-
-    Options:
-    -h, --help            show this help message and exit
-    -m, --mic             record sounds from microphone
-    -f AUDIO_FILE, --file=AUDIO_FILE
-                            audio file which to be transcribed and translated
-    -s TIME_SLICE, --slice=TIME_SLICE
-                            time slice of each wave file
-    -a API, --api=API     0 - CMU Sphinx, 1 - Google Cloud, 2 - Bing API, 3 -
-                            Houndify API
-    -l LANGUAGE, --lan=LANGUAGE
-                            language which to be transcribed
-    -t TRANSLATE, --tran=TRANSLATE
-                            translate to another language
-    --qt                  runs UI with QT
-    --tk                  runs UI with Tk   
+   Usage: diplomatist.py [options]
+   
+   Options:
+   -h, --help            show this help message and exit
+   -m, --mic             record sounds from microphone
+   -f AUDIO_FILE, --file=AUDIO_FILE
+                           audio file which to be transcribed and translated
+   -s TIME_SLICE, --slice=TIME_SLICE
+                           time slice of each wave file
+   -a API, --api=API     0 - CMU Sphinx, 1 - Google Cloud, 2 - Bing API, 3 -
+                           Houndify API, 4 - Baidu DeepSpeech
+   -l LANGUAGE, --lan=LANGUAGE
+                           language which to be transcribed
+   -t TRANSLATE, --tran=TRANSLATE
+                           translate to another language
+   --qt                  runs UI with QT
+   --tk                  runs UI with Tk
    ```
 
 ## UI
