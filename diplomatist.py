@@ -60,6 +60,9 @@ class Diplomatist():
                 sys.exit(-1)
             from deepspeech import DeepSpeechRecognizer
             self.deepspeech_recognizer = DeepSpeechRecognizer(self.config["API"]["4"]["model"], self.config["API"]["4"]["alphabet"], self.config["API"]["4"]["lm"], self.config["API"]["4"]["trie"])
+        if self.api == 5:
+            from azurespeech import AzureSpeechRecognizer
+            self.azurespeech_recognizer = AzureSpeechRecognizer()
 
     def transcribe(self, language="en-US", audio_file=None):
         """transcribe audio to text
@@ -91,6 +94,8 @@ class Diplomatist():
                 return recognizer.recognize_houndify(audio, self.cred.split(",")[0], self.cred.split(",")[1])
             elif self.api == 4:
                 return self.deepspeech_recognizer.recognize(audio_file)
+            elif self.api == 5:
+                return self.azurespeech_recognizer.recognize(audio_file)
         except speech_recognition.UnknownValueError:
             print("Could Not Understand")
             return False
