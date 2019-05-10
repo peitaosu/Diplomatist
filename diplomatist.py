@@ -62,7 +62,7 @@ class Diplomatist():
             self.deepspeech_recognizer = DeepSpeechRecognizer(self.config["API"]["4"]["model"], self.config["API"]["4"]["alphabet"], self.config["API"]["4"]["lm"], self.config["API"]["4"]["trie"])
         if self.api == 5:
             from azurespeech import AzureSpeechRecognizer
-            self.azurespeech_recognizer = AzureSpeechRecognizer()
+            self.azurespeech_recognizer = AzureSpeechRecognizer(self.config["API"]["5"]["key"], self.config["API"]["5"]["region"])
 
     def transcribe(self, language="en-US", audio_file=None):
         """transcribe audio to text
