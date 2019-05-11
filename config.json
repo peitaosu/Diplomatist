@@ -21,6 +21,11 @@
             "alphabet": "",
             "lm": "",
             "trie": ""
+        },
+        "5": {
+            "name": "Azure Speech Service",
+            "key": "",
+            "region": ""
         }
     },
     "LOOPBACK_CAPTURE": "LoopbackCapture\\bin\\x64\\Debug\\LoopbackCapture.exe",
