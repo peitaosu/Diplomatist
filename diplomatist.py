@@ -36,6 +36,14 @@ class Diplomatist():
         for proxy in self.config["PROXY"]:
             os.environ[proxy] = self.config["PROXY"][proxy]
 
+    def _failed_if_null(self, input, warning=False):
+        if input == None or input == "":
+            if warning:
+                print("[WARNING]: {} is null.".format(input))
+            else:
+                raise Exception("[ERROR]: {} is null.".format(input))
+        return input
+
     def load_config(self):
         with open("config.json") as in_file:
             self.config = json.load(in_file)
@@ -59,10 +67,10 @@ class Diplomatist():
                 print("DeepSpeech not support Windows for now, please use other APIs.")
                 sys.exit(-1)
             from deepspeech import DeepSpeechRecognizer
-            self.deepspeech_recognizer = DeepSpeechRecognizer(self.config["API"]["4"]["model"], self.config["API"]["4"]["alphabet"], self.config["API"]["4"]["lm"], self.config["API"]["4"]["trie"])
+            self.deepspeech_recognizer = DeepSpeechRecognizer(self._failed_if_null(self.config["API"]["4"]["model"]), self._failed_if_null(self.config["API"]["4"]["alphabet"]), self._failed_if_null(self.config["API"]["4"]["lm"]), self._failed_if_null(self.config["API"]["4"]["trie"]))
         if self.api == 5:
             from azurespeech import AzureSpeechRecognizer
-            self.azurespeech_recognizer = AzureSpeechRecognizer(self.config["API"]["5"]["key"], self.config["API"]["5"]["region"])
+            self.azurespeech_recognizer = AzureSpeechRecognizer(self._failed_if_null(self.config["API"]["5"]["key"]), self._failed_if_null(self.config["API"]["5"]["region"]))
 
     def transcribe(self, language="en-US", audio_file=None):
         """transcribe audio to text
