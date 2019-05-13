@@ -23,9 +23,6 @@ class Diplomatist():
     def __init__(self, transcribe_api=0):
         self.load_config()
         self.set_transcribe_api(transcribe_api)
-        if self.config["API"]["1"]["cred"] != "":
-            import google.cloud.translate
-            self.translate_client = google.cloud.translate.Client()
         os.environ["LOOPBACK_CAPTURE"] = self.config["LOOPBACK_CAPTURE"]
         if platform.system() == "Windows":
             if not os.path.isfile(os.environ["LOOPBACK_CAPTURE"]):
@@ -62,6 +59,9 @@ class Diplomatist():
                     self.cred = cred_config.read()
             else:
                 self.cred = cred_config
+        if self.api == 1:
+            import google.cloud.translate
+            self.translate_client = google.cloud.translate.Client()
         if self.api == 4:
             if platform.system() == "Windows":
                 print("DeepSpeech not support Windows for now, please use other APIs.")
