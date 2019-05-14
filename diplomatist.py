@@ -20,9 +20,10 @@ elif platform.system() == "Windows":
 from mic import record_mic
 
 class Diplomatist():
-    def __init__(self, transcribe_api=0):
+    def __init__(self, transcribe_api=0, translate_api=1):
         self.load_config()
         self.set_transcribe_api(transcribe_api)
+        self.set_translate_api(translate_api)
         os.environ["LOOPBACK_CAPTURE"] = self.config["LOOPBACK_CAPTURE"]
         if platform.system() == "Windows":
             if not os.path.isfile(os.environ["LOOPBACK_CAPTURE"]):
@@ -59,9 +60,6 @@ class Diplomatist():
                     self.cred = cred_config.read()
             else:
                 self.cred = cred_config
-        if self.api == 1:
-            import google.cloud.translate
-            self.translate_client = google.cloud.translate.Client()
         if self.api == 4:
             if platform.system() == "Windows":
                 print("DeepSpeech not support Windows for now, please use other APIs.")
@@ -71,6 +69,11 @@ class Diplomatist():
         if self.api == 5:
             from azurespeech import AzureSpeechRecognizer
             self.azurespeech_recognizer = AzureSpeechRecognizer(self._failed_if_null(self.config["API"]["5"]["key"]), self._failed_if_null(self.config["API"]["5"]["region"]))
+
+    def set_translate_api(self, api=1):
+        if api == 1:
+            import google.cloud.translate
+            self.translate_client = google.cloud.translate.Client()
 
     def transcribe(self, language="en-US", audio_file=None):
         """transcribe audio to text
