@@ -12,6 +12,7 @@ Diplomatist is an auto audio transcribe(audio2text) and translate(lang2lang) too
 * 2 - Bing API
 * 3 - Houndify API
 * 4 - Baidu DeepSpeech (macOS/Linux Only)
+* 5 - Azure Speech Service (WIP)
 
 ## Key Features
 * Audio Transcription
