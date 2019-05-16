@@ -35,6 +35,15 @@ class Diplomatist():
             os.environ[proxy] = self.config["PROXY"][proxy]
 
     def _failed_if_null(self, input, warning=False):
+        """internal function, check if input is null
+
+        args:
+            input (item)
+            warning (bool)
+        
+        return:
+            input\Exception
+        """
         if input == None or input == "":
             if warning:
                 print("[WARNING]: {} is null.".format(input))
@@ -43,15 +52,24 @@ class Diplomatist():
         return input
 
     def load_config(self):
+        """load config from config.json
+        """
         with open("config.json") as in_file:
             self.config = json.load(in_file)
 
     def save_config(self):
+        """save config to config.json
+        """
         with open("config.json", "w") as out_file:
             json.dump(self.config, out_file, sort_keys=True, indent=4)
 
     def set_transcribe_api(self, api=0):
-        self.api = api
+        """set transcribe api
+
+        args:
+            api (int)
+        """
+        self.transcribe_api = api
         self.cred = None
         if "cred" in self.config["API"][str(api)] and self.config["API"][str(api)]["cred"] != "":
             cred_config = self.config["API"][str(api)]["cred"]
@@ -60,18 +78,24 @@ class Diplomatist():
                     self.cred = cred_config.read()
             else:
                 self.cred = cred_config
-        if self.api == 4:
+        if self.transcribe_api == 4:
             if platform.system() == "Windows":
                 print("DeepSpeech not support Windows for now, please use other APIs.")
                 sys.exit(-1)
             from deepspeech import DeepSpeechRecognizer
             self.deepspeech_recognizer = DeepSpeechRecognizer(self._failed_if_null(self.config["API"]["4"]["model"]), self._failed_if_null(self.config["API"]["4"]["alphabet"]), self._failed_if_null(self.config["API"]["4"]["lm"]), self._failed_if_null(self.config["API"]["4"]["trie"]))
-        if self.api == 5:
+        if self.transcribe_api == 5:
             from azurespeech import AzureSpeechRecognizer
             self.azurespeech_recognizer = AzureSpeechRecognizer(self._failed_if_null(self.config["API"]["5"]["key"]), self._failed_if_null(self.config["API"]["5"]["region"]))
 
     def set_translate_api(self, api=1):
-        if api == 1:
+        """set translate api
+
+        args:
+            api (int)
+        """
+        self.translate_api = api
+        if self.translate_api == 1:
             import google.cloud.translate
             self.translate_client = google.cloud.translate.Client()
 
@@ -95,17 +119,17 @@ class Diplomatist():
         with speech_recognition.AudioFile(audio_file) as source:
             audio = recognizer.record(source)
         try:
-            if self.api == 0:
+            if self.transcribe_api == 0:
                 return recognizer.recognize_sphinx(audio, language)
-            elif self.api == 1:
+            elif self.transcribe_api == 1:
                 return recognizer.recognize_google_cloud(audio, self.cred, language)
-            elif self.api == 2:
+            elif self.transcribe_api == 2:
                 return recognizer.recognize_bing(audio, self.cred, language)
-            elif self.api == 3:
+            elif self.transcribe_api == 3:
                 return recognizer.recognize_houndify(audio, self.cred.split(",")[0], self.cred.split(",")[1])
-            elif self.api == 4:
+            elif self.transcribe_api == 4:
                 return self.deepspeech_recognizer.recognize(audio_file)
-            elif self.api == 5:
+            elif self.transcribe_api == 5:
                 return self.azurespeech_recognizer.recognize(audio_file)
         except speech_recognition.UnknownValueError:
             print("Could Not Understand")
